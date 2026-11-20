@@ -19,6 +19,50 @@ function __MGSAAPI__.isSampLoaded()
 
     return ok and type(base) == "number" and base ~= 0
 end
+
+
+local function MGSA_GetSampVersion()
+    if not MGSA_SAMP_API or
+       type(MGSA_SAMP_API.GetSAMPVersion) ~= "function" then
+        return nil
+    end
+
+    local ok, version = pcall(MGSA_SAMP_API.GetSAMPVersion)
+
+    if not ok then
+        return nil
+    end
+
+    return version
+end
+
+local function MGSA_GetRefObject(refFunction)
+    if type(refFunction) ~= "function" then
+        return nil
+    end
+
+    local ok, pointer = pcall(refFunction)
+
+    if not ok or not MGSA_IsValidPointer(pointer) then
+        return nil
+    end
+
+    if MGSA_GetSampVersion() == 3 then
+        local derefOk, object = pcall(function()
+            return pointer[0]
+        end)
+
+        if not derefOk or not MGSA_IsValidPointer(object) then
+            return nil
+        end
+
+        return object
+    end
+
+    return pointer
+end
+
+
 --------------------------------------------------------
 function __MGSAAPI__.isSampAvailable()
     if not __MGSAAPI__.isSampLoaded() then
@@ -30,14 +74,13 @@ function __MGSAAPI__.isSampAvailable()
         return false
     end
 
-    local ok, netgame = pcall(MGSA_CNetGame.RefNetGame)
-
-    if not ok then
-        return false
-    end
+    local netgame = MGSA_GetRefObject(
+        MGSA_CNetGame.RefNetGame
+    )
 
     return MGSA_IsValidPointer(netgame)
 end
+
 
 -----------------------------------------------------
 local CHAT_TYPE_DEBUG = 8
@@ -60,7 +103,7 @@ function __MGSAAPI__.sampAddChatMessage(text, color)
     end
 
     local ok, result = pcall(function()
-        local chat = MGSA_CChat.RefChat()
+        local chat = MGSA_GetRefObject(MGSA_CChat.RefChat)
 
         if chat == nil or chat == MGSA_FFI.NULL then
             return false
@@ -87,6 +130,8 @@ function __MGSAAPI__.sampAddChatMessage(text, color)
 
     return result
 end
+
+
 ---------------------------------------------------------------
 
 function __MGSAAPI__.sampShowDialog(dialogId, title, text, button1, button2, dialogStyle)
@@ -95,7 +140,7 @@ function __MGSAAPI__.sampShowDialog(dialogId, title, text, button1, button2, dia
     end
 
     local ok, result = pcall(function()
-        local dialog = MGSA_CDialog.RefDialog()
+        local dialog = MGSA_GetRefObject(MGSA_CDialog.RefDialog)
 
         if dialog == nil or dialog == MGSA_FFI.NULL then
             return false
@@ -124,10 +169,15 @@ function __MGSAAPI__.sampShowDialog(dialogId, title, text, button1, button2, dia
 end
 
 local function __isDialogOpen__()
-    local dialog = MGSA_CDialog.RefDialog()
+    local dialog = MGSA_GetRefObject(MGSA_CDialog.RefDialog)
 
-    return dialog ~= nil and dialog.m_bIsActive ~= 0
+    if not MGSA_IsValidPointer(dialog) then
+        return false
+    end
+
+    return dialog.m_bIsActive ~= 0
 end
+
 -------------------------------------------------------------------
 
 function __MGSAAPI__.sampIsPlayerConnected(playerId)
@@ -142,7 +192,7 @@ function __MGSAAPI__.sampIsPlayerConnected(playerId)
     end
 
     local ok, result = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
 
         if netGame == nil or netGame == MGSA_FFI.NULL then
             return false
@@ -170,8 +220,13 @@ function __MGSAAPI__.sampGetCharHandleBySampPlayerId(playerId)
     end
 
     local ok, ped = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+        if not MGSA_IsValidPointer(netGame) then return 0 end
+
         local playerPool = netGame:GetPlayerPool()
+        if not MGSA_IsValidPointer(playerPool) then return 0 end
+
+        local remotePlayer = playerPool:GetPlayer(playerId)
 
         local remotePlayer = playerPool:GetPlayer(playerId)
 
@@ -208,7 +263,7 @@ function __MGSAAPI__.sampGetPlayerColor(playerId)
     end
 
     local ok, color = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if netGame == nil or netGame == MGSA_FFI.NULL then
             return 0
         end
@@ -246,7 +301,7 @@ function __MGSAAPI__.sampGetPlayerHealthComplex(playerId)
     end
 
     local ok, health = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if netGame == nil or netGame == MGSA_FFI.NULL then
             return nil
         end
@@ -276,48 +331,8 @@ function __MGSAAPI__.sampGetPlayerHealthComplex(playerId)
     return true, health
 end
 
-local function MGSA_DebugPlayer(pid)
-    local remotePlayer = MGSA_CNetGame.RefNetGame():GetPlayerPool():GetPlayer(pid)
-
-    if not MGSA_IsValidPointer(remotePlayer) then
-        print("[MGSA DEBUG] RemotePlayer nije validan!")
-        return
-    end
-
-    print("================================")
-    print("Igrac: " .. __MGSAAPI__.sampGetPlayerNickname(pid))
-
-    print("Reported Health: " .. tostring(remotePlayer.m_fReportedHealth))
-    print("Reported Armor: " .. tostring(remotePlayer.m_fReportedArmour))
-
-    local sampPed = remotePlayer.m_pPed
-
-    print("SAMP Ped: " .. tostring(sampPed))
-
-    if MGSA_IsValidPointer(sampPed) then
-        print("GTA GamePed: " .. tostring(sampPed.m_pGamePed))
-
-        local rawHealth = tonumber(sampPed:GetHealth())
-        local rawArmor = tonumber(sampPed:GetArmour())
-
-        print("Raw Health: " .. tostring(rawHealth))
-        print("Raw Armor: " .. tostring(rawArmor))
-
-        local okHealth, complexHealth =
-            __MGSAAPI__.sampGetPlayerHealthComplex(pid)
-
-        local okArmor, complexArmor =
-            __MGSAAPI__.sampGetPlayerArmorComplex(pid)
-
-        print("Complex Health: " .. tostring(okHealth) .. " / " .. tostring(complexHealth))
-        print("Complex Armor: " .. tostring(okArmor) .. " / " .. tostring(complexArmor))
-    end
-
-    print("================================")
-end
 
 function __MGSAAPI__.sampGetPlayerHealth(pid)
-    --MGSA_DebugPlayer(pid)
     local ok, hp = __MGSAAPI__.sampGetPlayerHealthComplex(pid)
     if ok then return hp end
     return 0
@@ -335,7 +350,7 @@ function __MGSAAPI__.sampGetPlayerArmorComplex(playerId)
     end
 
     local ok, armor = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if netGame == nil or netGame == MGSA_FFI.NULL then
             return nil
         end
@@ -379,7 +394,7 @@ end
 ----------------------------NICKNAME--------------------------------
 
 
-function __MGSAAPI__.sampGetPlayerNicknameComplex(playerId)
+function __MGSAAPI__.sampGetPlayerNicknameComplexOld(playerId)
     playerId = tonumber(playerId)
 
     if not playerId or playerId < 0 or playerId > 1003 or playerId % 1 ~= 0 then
@@ -391,7 +406,7 @@ function __MGSAAPI__.sampGetPlayerNicknameComplex(playerId)
     end
 
     local ok, nickname = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if not MGSA_IsValidPointer(netGame) then return nil end
 
         local playerPool = netGame:GetPlayerPool()
@@ -440,6 +455,50 @@ function __MGSAAPI__.sampGetPlayerNicknameComplex(playerId)
 end
 
 
+function __MGSAAPI__.sampGetPlayerNicknameComplex(playerId)
+    playerId = tonumber(playerId)
+
+    if not playerId or playerId < 0 or playerId > 1003 or playerId % 1 ~= 0 then
+        return false, ""
+    end
+
+    if not __MGSAAPI__.sampIsPlayerConnected(playerId) then
+        return false, ""
+    end
+
+    local ok, nickname = pcall(function()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+        if not MGSA_IsValidPointer(netGame) then
+            return nil
+        end
+
+        local playerPool = netGame:GetPlayerPool()
+        if not MGSA_IsValidPointer(playerPool) then
+            return nil
+        end
+
+        local namePointer = playerPool:GetName(playerId)
+        if not MGSA_IsValidPointer(namePointer) then
+            return nil
+        end
+
+        return MGSA_FFI.string(namePointer)
+    end)
+
+    if not ok then
+        print("[MGSA] Nickname error: " .. tostring(nickname))
+        return false, ""
+    end
+
+    if nickname == nil or nickname == "" then
+        return false, ""
+    end
+
+    return true, nickname
+end
+
+
+
 function __MGSAAPI__.sampGetPlayerNickname(pid)
     local ok, res = __MGSAAPI__.sampGetPlayerNicknameComplex(pid)
     if ok then return res end
@@ -452,7 +511,7 @@ function __MGSAAPI__.sampGetPlayerScoreComplex(pid)
         return false, 0
     end
     local ok, ss = pcall(function ()
-        local ng = MGSA_CNetGame.RefNetGame()
+        local ng = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if not MGSA_IsValidPointer(ng) then return nil end
         local pp = ng:GetPlayerPool()
         if not MGSA_IsValidPointer(pp) then return nil end
@@ -481,7 +540,7 @@ function __MGSAAPI__.sampGetPlayerPingComplex(pid)
     end
 
     local ok, ping = pcall(function()
-        local netGame = MGSA_CNetGame.RefNetGame()
+        local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
         if not MGSA_IsValidPointer(netGame) then return nil end
 
         local playerPool = netGame:GetPlayerPool()
@@ -530,7 +589,7 @@ function __MGSAAPI__.sampCloseChatInput()
     end
 
     local ok, result = pcall(function()
-        local input = MGSA_CInput.RefInputBox()
+        local input = MGSA_GetRefObject(MGSA_CInput.RefInputBox)
 
         if not MGSA_IsValidPointer(input) then
             return false
@@ -553,7 +612,7 @@ end
 
 MGSA_CHRONO.task(
     3.0, function(id)
-        local n = MGSA_CNetGame.RefNetGame() if MGSA_IsValidPointer(n) then
+        local n = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame) if MGSA_IsValidPointer(n) then
             n:UpdatePlayers()
         end
     end, true
@@ -576,12 +635,12 @@ end
 
 
 local function MGSA_DebugChat()
-    local ok, chat = pcall(MGSA_CChat.RefChat)
+    local chat = MGSA_GetRefObject(MGSA_CChat.RefChat)
 
     print("[MGSA DEBUG] RefChat OK: " .. tostring(ok))
     print("[MGSA DEBUG] RefChat result: " .. tostring(chat))
 
-    if not ok or chat == nil or chat == MGSA_FFI.NULL then
+    if chat == nil or chat == MGSA_FFI.NULL then
         print("[MGSA DEBUG] Chat is not initialized")
         return
     end
@@ -610,13 +669,11 @@ function MGSA_TestChat()
     print("SAMP Available: " ..
         tostring(__MGSAAPI__.isSampAvailable()))
 
-    local netOk, netgame = pcall(MGSA_CNetGame.RefNetGame)
-    local chatOk, chat = pcall(MGSA_CChat.RefChat)
+    local netgame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+    local chat = MGSA_GetRefObject(MGSA_CChat.RefChat)
 
-    print("NetGame call: " .. tostring(netOk))
     print("NetGame pointer: " .. tostring(netgame))
 
-    print("Chat call: " .. tostring(chatOk))
     print("Chat pointer: " .. tostring(chat))
 
     print("SAMP Base: " ..
@@ -625,7 +682,7 @@ function MGSA_TestChat()
     print("====================================")
     
     local ok, chat = pcall(function()
-        return MGSA_CChat.RefChat()
+        return MGSA_GetRefObject(MGSA_CChat.RefChat)
     end)
 
     if not ok or chat == nil or chat == MGSA_FFI.NULL then
@@ -663,7 +720,7 @@ end
 
 
 function MGSA_InspectChatMethods()
-    local chat = MGSA_CChat.RefChat()
+    local chat = MGSA_GetRefObject(MGSA_CChat.RefChat)
 
     if chat == nil or chat == MGSA_FFI.NULL then
         print("[CHAT] Invalid pointer")
@@ -697,8 +754,19 @@ function MGSA_InspectChatMethods()
     end
 end
 function MGSA_PingAccessTest()
-    local netGame = MGSA_CNetGame.RefNetGame()
+    local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+
+    if not MGSA_IsValidPointer(netGame) then
+        print("[PING DEBUG] NetGame nije validan")
+        return
+    end
+
     local pool = netGame:GetPlayerPool()
+
+    if not MGSA_IsValidPointer(pool) then
+        print("[PING DEBUG] PlayerPool nije validan")
+        return
+    end
 
     for id = 0, 1003 do
         if pool:IsConnected(id) ~= 0 then
@@ -773,5 +841,61 @@ function MGSA_TestVersion()
     print("=======================================")
 
 end
+
+function MGSA_DebugPlayer(pid)
+    local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+    if not MGSA_IsValidPointer(netGame) then
+        print("[MGSA DEBUG] NetGame nije validan!")
+        return
+    end
+
+    local playerPool = netGame:GetPlayerPool()
+    if not MGSA_IsValidPointer(playerPool) then
+        print("[MGSA DEBUG] PlayerPool nije validan!")
+        return
+    end
+
+    local remotePlayer = playerPool:GetPlayer(pid)
+    if not MGSA_IsValidPointer(remotePlayer) then
+        print("[MGSA DEBUG] RemotePlayer nije validan!")
+        return
+    end
+    if not MGSA_IsValidPointer(remotePlayer) then
+        print("[MGSA DEBUG] RemotePlayer nije validan!")
+        return
+    end
+
+    print("================================")
+    print("Igrac: " .. __MGSAAPI__.sampGetPlayerNickname(pid))
+
+    print("Reported Health: " .. tostring(remotePlayer.m_fReportedHealth))
+    print("Reported Armor: " .. tostring(remotePlayer.m_fReportedArmour))
+
+    local sampPed = remotePlayer.m_pPed
+
+    print("SAMP Ped: " .. tostring(sampPed))
+
+    if MGSA_IsValidPointer(sampPed) then
+        print("GTA GamePed: " .. tostring(sampPed.m_pGamePed))
+
+        local rawHealth = tonumber(sampPed:GetHealth())
+        local rawArmor = tonumber(sampPed:GetArmour())
+
+        print("Raw Health: " .. tostring(rawHealth))
+        print("Raw Armor: " .. tostring(rawArmor))
+
+        local okHealth, complexHealth =
+            __MGSAAPI__.sampGetPlayerHealthComplex(pid)
+
+        local okArmor, complexArmor =
+            __MGSAAPI__.sampGetPlayerArmorComplex(pid)
+
+        print("Complex Health: " .. tostring(okHealth) .. " / " .. tostring(complexHealth))
+        print("Complex Armor: " .. tostring(okArmor) .. " / " .. tostring(complexArmor))
+    end
+
+    print("================================")
+end
+
 
 return __MGSAAPI__

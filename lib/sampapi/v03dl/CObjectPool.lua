@@ -1,9 +1,4 @@
 
---[[
-    Project: SAMP-API.lua
-    Version: SA-MP 0.3.DL-1
-]]
-
 local sampapi = require 'sampapi'
 local shared = sampapi.shared
 local mt = require 'sampapi.metatype'
@@ -17,7 +12,9 @@ enum {
     MAX_OBJECTS = 2100,
 };
 
+typedef struct SCGameObject SCGameObject;
 typedef struct SCObjectPool SCObjectPool;
+
 #pragma pack(push, 1)
 struct SCObjectPool {
     int m_nLargestId;
@@ -27,7 +24,7 @@ struct SCObjectPool {
 #pragma pack(pop)
 ]]
 
-shared.validate_size('struct SCObjectPool', 0x2944)
+shared.validate_size('struct SCObjectPool', 0x41A4)
 
 local CObjectPool_constructor = ffi.cast(
     'void(__thiscall*)(SCObjectPool*)',
@@ -67,12 +64,12 @@ local SCObjectPool_mt = {
     ),
 
     Find = ffi.cast(
-        'SCObject*(__thiscall*)(SCObjectPool*, SCObject*)',
+        'SCObject*(__thiscall*)(SCObjectPool*, SCGameObject*)',
         sampapi.GetAddress(0x128D0)
     ),
 
     GetId = ffi.cast(
-        'int(__thiscall*)(SCObjectPool*, SCObject*)',
+        'int(__thiscall*)(SCObjectPool*, SCGameObject*)',
         sampapi.GetAddress(0x12910)
     ),
 

@@ -1,3 +1,7 @@
+--Miki's GTASAdmin
+-- Collection of essential scripts
+
+
 MGSA_MOONLOADER = require("moonloader")
 MGSA_MOONADDITIONS = require("MoonAdditions")
 MGSA_MEMORY = require("memory")

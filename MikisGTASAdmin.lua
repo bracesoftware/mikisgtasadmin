@@ -55,11 +55,7 @@ local MGSA_GITHUB = {
     BASE_URL = "https://raw.githubusercontent.com/bracesoftware/mikisgtasadmin/main/",
     VERSION = "version.txt"
 }
-
 local MGSA_ROOT = getWorkingDirectory() .. "\\MikisGTASAdmin\\"
-
-----------------------------------------
-
 local MGSA_FILES = {
     "MikisGTASAdmin/entry.lua",
     "MikisGTASAdmin/keys.lua",
@@ -80,19 +76,23 @@ local MGSA_FILES = {
     "MikisGTASAdmin/dynamic/obsconnect.lua"
 }
 
----------------------------------
-
+------------------------------------------
 local function MGSA_ReadVersion(path)
     local file = io.open(path, "r")
-    if not file then return 0 end
 
-    local version = tonumber(file:read("*a"):match("%d+"))
+    if not file then
+        return 0
+    end
+
+    local data = file:read("*a")
     file:close()
 
-    return version
-end
--------------------------------------------
+    local version = tonumber(data:match("%d+"))
 
+    return version or 0
+end
+
+------------------------------------------
 local function MGSA_Download(url, path)
     local finished = false
     local success = false
@@ -115,13 +115,11 @@ local function MGSA_Download(url, path)
     return finished and success
 end
 
---------------------------------------------------
-
+------------------------------------------
 local function MGSA_Update()
-
     createDirectory(MGSA_ROOT)
 
-    print("PROVJERAVAM AZURIRANJA !!!")
+    print("[MGSA] PROVJERAVAM AZURIRANJA...")
 
     local remoteVersionPath = MGSA_ROOT .. "version.tmp"
 
@@ -130,15 +128,15 @@ local function MGSA_Update()
         remoteVersionPath
     ) then
         os.remove(remoteVersionPath)
-        print("GITHUB NEDOSTUPAN")
+        print("[MGSA] GITHUB NEDOSTUPAN!")
         return false
     end
 
     local remoteVersion = MGSA_ReadVersion(remoteVersionPath)
     os.remove(remoteVersionPath)
 
-    if not remoteVersion then
-        print("INVALIDNA VERZIJA")
+    if remoteVersion <= 0 then
+        print("[MGSA] INVALIDNA VERZIJA!")
         return false
     end
 
@@ -147,12 +145,12 @@ local function MGSA_Update()
     )
 
     if localVersion == remoteVersion then
-        print("SVE VEC AZURNO.")
+        print("[MGSA] SVE JE VEC AZURNO.")
         return true
     end
 
-    print("NOVI UPDATE: " .. remoteVersion)
-    print("SKIDAM UPDATE...")
+    print("[MGSA] NOVI UPDATE: " .. remoteVersion)
+    print("[MGSA] SKIDAM UPDATE...")
 
     for _, file in ipairs(MGSA_FILES) do
 
@@ -160,36 +158,39 @@ local function MGSA_Update()
             "^MikisGTASAdmin/", ""
         )
 
-        local directory = relativePath:match("^(.*)/[^/]+$")
+        local dd = relativePath:match("^(.*)/[^/]+$")
 
-        if directory then
-            local current = MGSA_ROOT
+        if dd then
+            local cc = MGSA_ROOT
 
-            for folder in directory:gmatch("[^/]+") do
-                current = current .. folder .. "\\"
-                createDirectory(current)
+            for folder in dd:gmatch("[^/]+") do
+                cc = cc .. folder .. "\\"
+                createDirectory(cc)
             end
         end
 
-        local destination =
-            MGSA_ROOT .. relativePath:gsub("/", "\\")
+        local d = MGSA_ROOT ..
+            relativePath:gsub("/", "\\")
 
-        local temporary = destination .. ".tmp"
+        local tt = d .. ".tmp"
 
         print("[MGSA] SKIDANJE: " .. relativePath)
 
+
         if not MGSA_Download(
             MGSA_GITHUB.BASE_URL .. file,
-            temporary
+            tt
         ) then
-            os.remove(temporary)
-            print("[MGSA] NEUSPJESAN UPDATE: " .. relativePath)
+            os.remove(tt)
+
+            print("[MGSA] DOWNLOAD ERROR: " .. relativePath)
             return false
         end
 
-        local check = io.open(temporary, "rb")
+        local check = io.open(tt, "rb")
 
         if not check then
+            print("[MGSA] FAJL NIJE PRONADJEN: " .. tt)
             return false
         end
 
@@ -197,23 +198,33 @@ local function MGSA_Update()
         check:close()
 
         if not size or size == 0 then
-            os.remove(temporary)
+            os.remove(tt)
+
+            print("[MGSA] PRAZAN FAJL: " .. relativePath)
             return false
         end
 
-        os.remove(destination)
+        os.remove(d)
+        local rr, ee = os.rename(tt,d)
 
-        if not os.rename(temporary, destination) then
-            os.remove(temporary)
+        if not rr then
+            print("[MGSA] RENAME ERROR: " .. tostring(ee))
+            print("[MGSA] TEMP: " .. tt)
+            print("[MGSA] DEST: " .. d)
+
             return false
         end
+
+        print("[MGSA] INSTALIRAN: " .. relativePath)
     end
 
     local versionFile = io.open(
-        MGSA_ROOT .. "version.txt", "w"
+        MGSA_ROOT .. "version.txt",
+        "w"
     )
 
     if not versionFile then
+        print("[MGSA] NE MOGU ZAPISATI VERSION.TXT!")
         return false
     end
 
@@ -225,18 +236,31 @@ local function MGSA_Update()
     return true
 end
 
-------------------------------------
+----------------------------------------------------------------
 function main()
-    MGSA_Update()
+
+    local updateSuccess = MGSA_Update()
+
+    if not updateSuccess then
+        print("[MGSA] UPDATE NIJE USPJEO! ENTRY SE NECE POKRENUTI.")
+        return
+    end
 
     local entry = MGSA_ROOT .. "entry.lua"
 
     if doesFileExist(entry) then
+
         dofile(entry)
-        print("[MGSA] GTASAdmin loaded!")
-        MGSA_ENTRY__()
+
+        print("[MGSA] GTASADMIN UCITAN!")
+
+        if type(MGSA_ENTRY__) == "function" then
+            MGSA_ENTRY__()
+        end
+
     else
-        print("[MGSA] entry.lua not found!")
+        print("[MGSA] ULAZNI ENTRY FAJL NIJE DOSTUPAN!")
     end
+
     return
 end

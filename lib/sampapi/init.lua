@@ -58,6 +58,7 @@ enum {
     SAMP_VERSION_037R1,
     SAMP_VERSION_037R3_1,
     SAMP_VERSION_037R5_1,
+    SAMP_VERSION_03DL
 };
 
 typedef struct _string {
@@ -86,7 +87,8 @@ local sampVersion = ffi.C.SAMP_VERSION_UNKNOWN
 local versions = {
     [0x31DF13] = ffi.C.SAMP_VERSION_037R1,
     [0xCC4D0] = ffi.C.SAMP_VERSION_037R3_1,
-    [0xCBC90] = ffi.C.SAMP_VERSION_037R5_1
+    [0xCBC90] = ffi.C.SAMP_VERSION_037R5_1,
+    [0xFDB60] = ffi.C.SAMP_VERSION_03DL
 }
 function module.GetSAMPVersion()
     if not init then
@@ -107,6 +109,7 @@ local versionPaths = {
     [ffi.C.SAMP_VERSION_037R1] = 'v037r1',
     [ffi.C.SAMP_VERSION_037R3_1] = 'v037r3',
     [ffi.C.SAMP_VERSION_037R5_1] = 'v037r5',
+    [ffi.C.SAMP_VERSION_03DL] = 'v03dl'
 }
 function module.require(mod, addVersion)
     if addVersion then

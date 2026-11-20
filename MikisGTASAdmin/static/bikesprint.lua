@@ -31,6 +31,34 @@ local function isInVehicle()
     return vehPtr ~= 0
 end
 
+function __MGSAutoBikeSprint__.toggle()
+    MGSA_BIKE_TWEAKS = not MGSA_BIKE_TWEAKS
+    sendWarningMessage("Bike Tweaks modul je izmijenjen!")
+    if MGSA_BIKE_TWEAKS then
+        MGSAAltChat.send(
+            {{
+                text = "Biketweaks modul ",
+                color = BIJELA
+            },
+            {
+                text = "omogucen!",
+                color = ZELENA
+            }}
+        )
+        return
+    end
+    MGSAAltChat.send(
+        {{
+            text = "Biketweaks modul ",
+            color = BIJELA
+        },
+        {
+            text = "onemogucen!",
+            color = CRVENA
+        }}
+    )
+end
+
 function __MGSAutoBikeSprint__.load()
     MGSA_LOADED_MODULE({
         name = "Bike Tweaks",
@@ -44,6 +72,7 @@ local nextPressTime = 0
 local isHoldingSprint = false
 
 function __MGSAutoBikeSprint__.loop()
+    if not MGSA_BIKE_TWEAKS then return end
     MIKIGTASADMIN_CANSPRINT = not MGSA_API.isSampChatOpened() and not MGSA_API.isSampDialogOnScreen()
 
     if MIKIGTASADMIN_CANSPRINT ~= MIKIGTASADMIN_CANSPRINT_OLD then
@@ -100,10 +129,8 @@ function __MGSAutoBikeSprint__.loop()
     end
 end
 
-
--- SUPER BIKE CHARGE JUMP
-
 function __MGSAutoBikeSprint__.bikeJump()
+    if not MGSA_BIKE_TWEAKS then return end
     if not MIKIGTASADMIN_CANSPRINT then return end
 
     local model = getVehicleModel()

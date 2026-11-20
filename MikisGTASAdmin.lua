@@ -179,11 +179,11 @@ local function MGSA_Update()
 
     for _, file in ipairs(MGSA_FILES) do
 
-        local relativePath = file:gsub(
+        local rrr = file:gsub(
             "^MikisGTASAdmin/", ""
         )
 
-        local dd = relativePath:match("^(.*)/[^/]+$")
+        local dd = rrr:match("^(.*)/[^/]+$")
 
         if dd then
             local cc = MGSA_ROOT
@@ -195,11 +195,11 @@ local function MGSA_Update()
         end
 
         local d = MGSA_ROOT ..
-            relativePath:gsub("/", "\\")
+            rrr:gsub("/", "\\")
 
         local tt = d .. ".tmp"
 
-        print("[MGSA] SKIDANJE: " .. relativePath)
+        print("[MGSA] SKIDANJE: " .. rrr)
 
 
         if not MGSA_Download(
@@ -208,7 +208,7 @@ local function MGSA_Update()
         ) then
             os.remove(tt)
 
-            print("[MGSA] DOWNLOAD ERROR: " .. relativePath)
+            print("[MGSA] DOWNLOAD ERROR: " .. rrr)
             return false
         end
 
@@ -225,7 +225,7 @@ local function MGSA_Update()
         if not size or size == 0 then
             os.remove(tt)
 
-            print("[MGSA] PRAZAN FAJL: " .. relativePath)
+            print("[MGSA] PRAZAN FAJL: " .. rrr)
             return false
         end
 
@@ -240,7 +240,7 @@ local function MGSA_Update()
             return false
         end
 
-        print("[MGSA] INSTALIRAN: " .. relativePath)
+        print("[MGSA] INSTALIRAN: " .. rrr)
     end
 
     local versionFile = io.open(

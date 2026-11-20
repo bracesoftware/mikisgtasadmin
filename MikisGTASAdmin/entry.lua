@@ -85,6 +85,7 @@ CRASH = "c"
 SPEC = "spec"
 SPECOFF = "specoff"
 ALTC = "altc"
+BIKE = "bike"
 
 --------------LIBRARIES-----------
 function MGSA_LOADED_MODULE(module)
@@ -132,10 +133,11 @@ MGSA_API = MGSA_STATIC_INCLUDE("api.lua")
 MGSA_DIALOG_OPEN = false
 MGSA_CHAT_OPEN = false
 
-
 MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_SKYBLUE.."Miki's"..COLOR_PEACH.." GTASAdmin"..COLOR_PURPLE .."!:."
+
 MGSA_SPRINTHOOK = true
 MGSA_ALT_CHAT = true
+MGSA_BIKE_TWEAKS = true
 
 --*************************************************************
 MGSA_AFK_SECONDS = 10
@@ -319,6 +321,7 @@ function MGSA_KOMANDE(params)
     COLOR_PINK.."* "..COLOR_SKYBLUE..SET_SKIN..COLOR_PEACH.." Postavite sebi skin!"..'\n'..
     COLOR_PINK.."* "..COLOR_SKYBLUE..SPRINT..COLOR_PEACH.." Ukljucite/iskljucite sprinthook!"..'\n'..
     COLOR_PINK.."* "..COLOR_SKYBLUE..WALLHACK..COLOR_PEACH.." Ukljucite/iskljucite wallhack!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..BIKE..COLOR_PEACH.." Ukljucite/iskljucite bike tweaks-hackove sa biciklom!"..'\n'..
     COLOR_PINK.."* "..COLOR_SKYBLUE..CRASH..COLOR_PEACH.." Izazovite rusenje igre!"..'\n'..
     COLOR_PINK.."* "..COLOR_SKYBLUE..SPEC..COLOR_PEACH.." Posmatrajte drugog igraca!"..'\n'..
     COLOR_PINK.."* "..COLOR_SKYBLUE..SPECOFF..COLOR_PEACH.." Ugasite spec!"..'\n'..
@@ -437,6 +440,14 @@ function MGSA_ENTRY()
             name = ALTC,
             func = MGSAAltChat.toggle,
             warn = false,
+            args = false
+        }
+    )
+    MGSA_REGISTER_COMMAND(
+        {
+            name = BIKE,
+            func = MGSAAutoBikeSprint.toggle,
+            warn = true,
             args = false
         }
     )

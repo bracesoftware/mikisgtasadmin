@@ -599,11 +599,6 @@ local function MGSA_DebugChat()
     end
 end
 
-if MGSA_CChat then
-    MGSA_DebugChat()
-end
-
-
 
 function MGSA_TestChat()
     print("========== MGSA CHAT TEST ==========")

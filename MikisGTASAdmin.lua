@@ -93,16 +93,20 @@ local function MGSA_ReadVersion(path)
 end
 
 ------------------------------------------
+
 local function MGSA_Download(url, path)
     local finished = false
     local success = false
 
+    os.remove(path)
+
     downloadUrlToFile(url, path, function(id, status)
         if status == 6 then
-            success = true
             finished = true
+            success = true
         elseif status < 0 then
             finished = true
+            success = false
         end
     end)
 
@@ -112,7 +116,28 @@ local function MGSA_Download(url, path)
         wait(100)
     end
 
-    return finished and success
+    if not finished then
+        print("[MGSA] DOWNLOAD TIMEOUT: " .. path)
+        return false
+    end
+
+    if not success then
+        print("[MGSA] DOWNLOAD FAILED: " .. path)
+        return false
+    end
+
+    local fileTimeout = os.clock() + 5
+
+    while not doesFileExist(path) and os.clock() < fileTimeout do
+        wait(100)
+    end
+
+    if not doesFileExist(path) then
+        print("[MGSA] FAJL NIJE KREIRAN: " .. path)
+        return false
+    end
+
+    return true
 end
 
 ------------------------------------------

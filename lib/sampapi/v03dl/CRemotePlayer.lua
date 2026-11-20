@@ -71,7 +71,7 @@ struct SCRemotePlayer {
     SCVector m_incarTargetPosition;
     SCVector m_incarTargetSpeed;
 
-    int pad_150[64];
+    unsigned char pad_150[64];
 
     SCVector m_positionDifference;
 

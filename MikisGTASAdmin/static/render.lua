@@ -11,6 +11,7 @@
  GREEN = ZELENA
 
 BLUE_LOL = 0xff2596be
+BLUE_AS_SEA = 0xff08679f
 
 -- Nijanse sive
  SVIJETLO_SIVA = 0xFFD3D3D3

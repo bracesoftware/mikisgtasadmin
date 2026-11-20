@@ -445,7 +445,34 @@ function __MGSAAPI__.sampGetPlayerNickname(pid)
     if ok then return res end
     return ""
 end
-----------------------------PING--------------------------------
+----------------------------PING AND SCORE--------------------------------
+function __MGSAAPI__.sampGetPlayerScoreComplex(pid)
+    pid = tonumber(pid)
+    if not __MGSAAPI__.sampIsPlayerConnected(pid) then
+        return false, 0
+    end
+    local ok, ss = pcall(function ()
+        local ng = MGSA_CNetGame.RefNetGame()
+        if not MGSA_IsValidPointer(ng) then return nil end
+        local pp = ng:GetPlayerPool()
+        if not MGSA_IsValidPointer(pp) then return nil end
+        return tonumber(pp:GetScore(pid))
+    end)
+
+    if not ok or ss == nil then
+        print("Score error: "..tostring(ss))
+        return false, 0
+    end
+
+    return true,ss
+end
+
+function __MGSAAPI__.sampGetPlayerScore(pid)
+    local ok, res = __MGSAAPI__.sampGetPlayerScoreComplex(pid)
+    if ok then return res end
+    return 0
+end
+
 function __MGSAAPI__.sampGetPlayerPingComplex(pid)
     pid = tonumber(pid)
 
@@ -477,29 +504,6 @@ function __MGSAAPI__.sampGetPlayerPing(pid)
     local ok, res = __MGSAAPI__.sampGetPlayerPingComplex(pid)
     if ok then return res end
     return 0
-end
-
-
-function MGSA_PingAccessTest()
-    local netGame = MGSA_CNetGame.RefNetGame()
-    local pool = netGame:GetPlayerPool()
-
-    for id = 0, 1003 do
-        if pool:IsConnected(id) ~= 0 then
-            local info = pool:GetAt(id)
-
-            if info ~= nil and info ~= MGSA_FFI.NULL then
-                pool:SetPing(id, 12345)
-                print(string.format(
-                    "[PING DEBUG] ID: %d | Ping: %d | Score: %d | Pointer: %s",
-                    id,
-                    tonumber(info.m_nPing),
-                    tonumber(info.m_nScore),
-                    tostring(info)
-                ))
-            end
-        end
-    end
 end
 
 ----------------------------COMMANDS/CHAT--------------------------------
@@ -692,7 +696,27 @@ function MGSA_InspectChatMethods()
         end
     end
 end
+function MGSA_PingAccessTest()
+    local netGame = MGSA_CNetGame.RefNetGame()
+    local pool = netGame:GetPlayerPool()
 
+    for id = 0, 1003 do
+        if pool:IsConnected(id) ~= 0 then
+            local info = pool:GetAt(id)
+
+            if info ~= nil and info ~= MGSA_FFI.NULL then
+                pool:SetPing(id, 12345)
+                print(string.format(
+                    "[PING DEBUG] ID: %d | Ping: %d | Score: %d | Pointer: %s",
+                    id,
+                    tonumber(info.m_nPing),
+                    tonumber(info.m_nScore),
+                    tostring(info)
+                ))
+            end
+        end
+    end
+end
 
 function MGSA_MASSDEBUG()
     print("---------------------MASS DEBUG----------------------")

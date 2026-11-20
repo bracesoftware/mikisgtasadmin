@@ -423,6 +423,7 @@ local function MGSA_RENDER_ONE(id)
                         x, y, z
                     )
 
+                    local score = MGSA_API.sampGetPlayerScore(id)
                     local ping = MGSA_API.sampGetPlayerPing(id)
                     local nickname = MGSA_API.sampGetPlayerNickname(id)
                     local hp, armor = MGSA_GET_PLAYER_HEALTH_ARMOR(id)
@@ -457,7 +458,7 @@ local function MGSA_RENDER_ONE(id)
                                 color = MGSA_GET_PING_COLOR(ping)
                             },
                             {
-                                text = string.format("[%d] %s ", id, nickname),
+                                text = string.format("(%d) %s ", id, nickname),
                                 color = col
                             },
                             {
@@ -484,8 +485,16 @@ local function MGSA_RENDER_ONE(id)
                                 color = ZUTA
                             },
                             {
-                                text = string.format("(%d) %s", vehid, vehname),
+                                text = string.format("(%d) %s"..MGSA_TAB, vehid, vehname),
                                 color = LIGHT_GRAY
+                            },
+                            {
+                                text = "Level/score: ",
+                                color = BLUE_AS_SEA
+                            },
+                            {
+                                text = string.format("%d", score),
+                                color = SVIJETLO_SIVA
                             }
                         }
                     )
@@ -614,6 +623,7 @@ local function MGSA_RENDER_VEHICLES()
                         local hp, armor = MGSA_GET_PLAYER_HEALTH_ARMOR(id)
                         local skin = MGSA_GET_SKIN(id)
                         local ping = MGSA_API.sampGetPlayerPing(id)
+                        local score = MGSA_API.sampGetPlayerScore(id)
 
                         MGSA_COMPLEX_LABEL_RENDER(
                             MGSA_FONT_SMALL, sx, lineY,
@@ -635,8 +645,20 @@ local function MGSA_RENDER_VEHICLES()
                                     color = BIJELA
                                 },
                                 {
-                                    text = string.format("Skin: %d", skin),
+                                    text = "Skin: ",
                                     color = GOLD
+                                },
+                                {
+                                    text = string.format("%d"..MGSA_TAB, skin),
+                                    color = SVIJETLO_SIVA
+                                },
+                                {
+                                    text = "Level: ",
+                                    color = BLUE_AS_SEA
+                                },
+                                {
+                                    text = string.format("%d", score),
+                                    color = SVIJETLO_SIVA
                                 }
                             }
                         )

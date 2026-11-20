@@ -274,9 +274,7 @@ function main()
     local entry = MGSA_ROOT .. "entry.lua"
 
     if doesFileExist(entry) then
-
         dofile(entry)
-
         print("[MGSA] GTASADMIN UCITAN!")
 
         if type(MGSA_ENTRY__) == "function" then

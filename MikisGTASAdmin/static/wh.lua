@@ -489,7 +489,7 @@ local function MGSA_RENDER_ONE(id)
                                 color = LIGHT_GRAY
                             },
                             {
-                                text = "Level/score: ",
+                                text = "Level: ",
                                 color = BLUE_AS_SEA
                             },
                             {
@@ -633,7 +633,7 @@ local function MGSA_RENDER_VEHICLES()
                                     color = MGSA_GET_PING_COLOR(ping)
                                 },
                                 {
-                                    text = string.format("[%d] %s"..MGSA_TAB, id,nick),
+                                    text = string.format("(%d) %s"..MGSA_TAB, id,nick),
                                     color = col
                                 },
                                 {

@@ -77,10 +77,13 @@ function __MGSACommandInput__.close()
 end
 
 function __MGSACommandInput__.execute()
-    wait(100)
     if not active then return false end
 
     local command = inputText
+
+    if command == "" then
+        wait(100)
+    end
 
     __MGSACommandInput__.close()
 

@@ -379,7 +379,7 @@ function MGSA_ENTRY()
     MGSA_TestVersion()
 
     sendInfoMessage("Pokrenut sistem: Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
-    sendInfoMessage("Koristite komandu '/"..MIKIS_GTASADMIN_HELP.."' za pomoc! [/"..MGSA.."]")
+    sendInfoMessage("Koristite tipku Z pa ENTER za pomoc! "..COLOR_RED.."[konzola]")
 
     --sampRegisterChatCommand(MIKIS_GTASADMIN_HELP, MGSA_KOMANDE)
     --sampRegisterChatCommand(MGSA, MGSA_KOMANDE)
@@ -489,8 +489,8 @@ function MGSA_ENTRY()
     end
 end
 
---////////////////////////////
-function main()
+--Ulazna funkcija bracala
+function MGSA_ENTRY__()
     MGSA_DUMP_STACK("main()")
     MGSA_ENTRY()
 end

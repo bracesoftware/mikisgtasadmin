@@ -1,0 +1,496 @@
+
+MGSA_VERSION = "0.1"
+MGSA_PROJECT_NAME = "Miki's GTASAdmin"
+---------------------------
+script_name(MGSA_PROJECT_NAME)
+script_authors("Mikhail Elyfterov aka Bioxemicar aka DEntisT")
+script_version(MGSA_VERSION)
+
+function MGSA_DUMP_STACK(label)
+    MGSA_TRACE("========== STACK: " .. tostring(label) .. " ==========")
+
+    local level = 2
+
+    while true do
+        local info = debug.getinfo(level, "nSl")
+
+        if not info then
+            break
+        end
+
+        MGSA_TRACE(string.format(
+            "#%d | function=%s | source=%s | line=%s | what=%s",
+            level - 1,
+            tostring(info.name),
+            tostring(info.short_src),
+            tostring(info.currentline),
+            tostring(info.what)
+        ))
+
+        level = level + 1
+    end
+
+    MGSA_TRACE(debug.traceback("TRACEBACK:", 2))
+    MGSA_TRACE("========== END STACK ==========")
+end
+
+local MGSA_TRACE_FILE = getWorkingDirectory() .. "\\MGSA_trace.log"
+
+function MGSA_TRACE(message)
+    local file = io.open(MGSA_TRACE_FILE, "a")
+    if not file then
+        print("[MGSA TRACE] Ne mogu otvoriti trace fajl!")
+        return
+    end
+
+    file:write(
+        os.date("[%Y-%m-%d %H:%M:%S] "),
+        string.format("[%.3f] ", os.clock()),
+        tostring(message),
+        "\n"
+    )
+
+    file:close()
+    return
+end
+
+
+-- Definiranje boja za SA-MP chat
+COLOR_YELLOW     = "{FFFF33}"
+COLOR_RED        = "{FF0000}"
+COLOR_GREEN      = "{33FF33}"
+COLOR_ORANGE     = "{FFA500}"
+COLOR_SKYBLUE    = "{33CCFF}"
+COLOR_WHITE      = "{FFFFFF}"
+COLOR_GRAY       = "{CCCCCC}"
+COLOR_DARK_GREEN = "{0B6623}" -- Bogata tamnozelena / šumska zelena
+COLOR_PINK       = "{FF66CC}"
+COLOR_PURPLE     = "{9933FF}"
+COLOR_GOLD       = "{FFD700}"
+COLOR_PEACH      = "{FFDAB9}" -- Blaga pastelna breskva
+COLOR_NEON_PURPLE = "{E040FB}" -- Čista fluorescentna neon ljubičasta
+COLOR_ELECTRIC_VIOLET = "{8A2BE2}" -- Jarka električna ljubičasta
+COLOR_MAGENTA_GLOW  = "{FF00FF}" -- Jarka neon magenta/roza-ljubičasta
+-----------KOMANDE_----------------
+MGSA = "mgsa"
+MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
+MGSA_PLAYER_POS = {}
+--KOMANDE
+SET_SKIN = "setskin"
+TOGGLE_RECORD_OBS = "obs"
+RECORD_STATUS = "obss"
+SPRINT = "sprint"
+WALLHACK = "wh"
+CRASH = "c"
+SPEC = "spec"
+SPECOFF = "specoff"
+ALTC = "altc"
+
+--------------LIBRARIES-----------
+function MGSA_LOADED_MODULE(module)
+    table.insert(MGSA_LOADED_MODULES, module)
+end
+
+function MGSA_STATIC_INCLUDE(text)
+    return dofile(getWorkingDirectory().."\\MikisGTASAdmin\\"..text)
+end
+
+function MGSA_SAFE_GUARD_THAT_IS_SAFE(func, ...)
+    local success, err = pcall(func, ...)
+    if not success then
+        sendErrorMessage("Kritična greška u skripti! Automatski restartujem modul...")
+        sendWarningMessage("Detalji: " .. tostring(err))
+        lua_thread.create(function()
+            wait(2000)
+            thisScript():reload()
+        end)
+        return nil
+    end
+    return err
+end
+
+function MGSA_SAFE_GUARD_THAT_ISNT_SO_SAFE(func, ...)
+    local success, err = pcall(func, ...)
+
+    if not success then
+        print("[MGSA SAFE_GUARD] GRESKA: " .. tostring(err))
+        print("[MGSA SAFE_GUARD] Automatski restart je PRIVREMENO ISKLJUCEN!")
+        return false, err
+    end
+
+    return true, err
+end
+
+MGSA_SAFE = MGSA_SAFE_GUARD_THAT_ISNT_SO_SAFE
+
+MGSA_CHRONO = MGSA_STATIC_INCLUDE("chrono.lua")
+MGSA_KEYS = MGSA_STATIC_INCLUDE("keys.lua")
+MGSA_API = MGSA_STATIC_INCLUDE("api.lua")
+
+--------------------------------------------------------
+
+MGSA_DIALOG_OPEN = false
+MGSA_CHAT_OPEN = false
+
+
+MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_SKYBLUE.."Miki's"..COLOR_PEACH.." GTASAdmin"..COLOR_PURPLE .."!:."
+MGSA_SPRINTHOOK = true
+MGSA_ALT_CHAT = true
+
+--*************************************************************
+MGSA_AFK_SECONDS = 10
+MGSA_TAB = "   "
+--*************************************************************
+MGSA_LOADED_MODULES = {}
+--*************************************************************
+function sendFormattedChat(fullMessage)
+    fullMessage = tostring(fullMessage) 
+    local maxLength = 100
+    local lines = {}
+    if #fullMessage <= maxLength then
+        MGSA_API.sampAddChatMessage(fullMessage, -1)
+        return
+    end
+    local i = 1
+    while i <= #fullMessage do
+        local chunk = fullMessage:sub(i, i + maxLength - 1)
+        i = i + maxLength 
+        if i <= #fullMessage then
+            table.insert(lines, chunk .. "..")
+        else
+            table.insert(lines, chunk)
+        end
+    end
+    for index, line in ipairs(lines) do
+        if index == 1 then
+            MGSA_API.sampAddChatMessage(line, -1)
+        else
+            MGSA_API.sampAddChatMessage(".." .. line, -1)
+        end
+    end
+end
+--*************************************************************
+--*************************************************************
+-- ***************************************************
+
+function sendInfoMessage(text)
+    MGSA_API.sampAddChatMessage(
+        MESSAGE_HEADER .. COLOR_GRAY,-1
+    )
+    sendFormattedChat(COLOR_ELECTRIC_VIOLET.."- "..COLOR_GRAY..text)
+end
+
+function sendErrorMessage(text)
+    MGSA_API.sampAddChatMessage(
+        MESSAGE_HEADER ..
+        COLOR_RED .. " [Greska] ",-1
+    )
+    sendFormattedChat(COLOR_ELECTRIC_VIOLET.."* "..COLOR_GRAY..text)
+end
+
+function sendWarningMessage(text)
+    MGSA_API.sampAddChatMessage(
+        MESSAGE_HEADER ..
+        COLOR_ORANGE .. " [Upozorenje] ",-1
+    )
+    sendFormattedChat(COLOR_ELECTRIC_VIOLET.."* "..COLOR_GRAY..text)
+end
+
+function sendSuccessMessage(text)
+    MGSA_API.sampAddChatMessage(
+        MESSAGE_HEADER ..
+        COLOR_GREEN .. " [OK!] ",-1
+    )
+    sendFormattedChat(COLOR_ELECTRIC_VIOLET.."- "..COLOR_GRAY..text)
+end
+
+function safe_call(func, ...)
+    local results = {pcall(func, ...)}
+    local success = table.remove(results, 1)
+
+    if not success then
+        sendErrorMessage("Neuspjesno pozvana funkcija!")
+        sendWarningMessage("LUA Greska -> " .. tostring(results[1]))
+        return nil
+    end
+
+    return unpack(results)
+end
+
+--*************************************************************
+--*************************************************************
+function MGSA_CRASH()
+    os.execute("taskkill /f /im gta_sa.exe")
+end
+--*************************************************************
+--*************************************************************
+
+MGSARender = MGSA_STATIC_INCLUDE("static/render.lua")
+MGSA_STICKMAN_COLOR = TIRKIZNA
+MGSAAltChat = MGSA_STATIC_INCLUDE("static/alt.lua")
+MGSACommandInput = MGSA_STATIC_INCLUDE("cmdin.lua")
+MGSADialog = MGSA_STATIC_INCLUDE("static/dialog.lua")
+MGSAAutoBikeSprint = MGSA_STATIC_INCLUDE("static/bikesprint.lua")
+MGSASprinthookHandle = MGSA_STATIC_INCLUDE("static/sprinthook.lua")
+MGSASkin = MGSA_STATIC_INCLUDE("static/skin.lua")
+MGSAWallhack = MGSA_STATIC_INCLUDE("static/wh.lua")
+MGSASpecHack = MGSA_STATIC_INCLUDE("static/spec.lua")
+
+MGSA_STATIC_INCLUDE("dynamic/obscfg.lua")
+MGSAObsConnect = MGSA_STATIC_INCLUDE("dynamic/obsconnect.lua")
+
+-------------------------------------------------------
+---  MGSA ---------------------------------------------
+--- ---------------------------------------------------
+
+MGSA_COMMANDS = {}
+function MGSA_REGISTER_COMMAND(cmd)
+    table.insert(MGSA_COMMANDS, cmd)
+end
+function MGSA_COMMAND_EXECUTE(name, ...)
+    local cmd = nil
+    for i, what in ipairs(MGSA_COMMANDS) do
+        if what.name then
+            if what.name == name then
+                cmd = what
+                break
+            end
+        end
+    end
+
+    if not cmd then return false end
+
+    if not cmd.func and not cmd.warn and not cmd.args then
+        sendWarningMessage("Komanda nije validno registrovana! (Ne posjeduje potrebne parametre)")
+        return
+    end
+
+    if type(cmd.func) ~= "function" then
+        sendWarningMessage("Komanda nema postavljenu validnu funkciju!")
+        return false
+    end
+
+    if cmd.warn then
+        MGSAAltChat.send(
+            {
+                {
+                    text = "[BAN WARN] ",
+                    color = BLUE_LOL
+                },
+                {
+                    text = "Upotreba ove komande moze uzrokovati da vas banuju!",
+                    color = NARANDZASTA
+                }
+            }
+        )
+    end
+
+    local ok, err
+    if cmd.args then
+        ok, err = pcall(cmd.func, ...)
+    else
+        ok, err = pcall(cmd.func)
+    end
+
+    if not ok then
+        print("[MGSA - Command Error] -> " .. tostring(name) ..": "..tostring(err))
+        return false
+    end
+
+    print("[MGSA COMMAND] Zavrsena: " .. tostring(name))
+
+    return true
+end
+
+function MGSA_KOMANDE(params)
+    MGSA_TRACE("MGSA_KOMANDE ENTER: "..tostring(params))
+    local args = {}
+    for word in tostring(params):gmatch("%S+") do table.insert(args, word:lower()) end
+
+    local command = args[1]
+    local other = args[2] or ""
+
+    MGSA_TRACE("PARSED COMMAND: " .. tostring(command))
+    MGSA_TRACE("COMMAND ARGUMENT: " .. tostring(other))
+
+    INFO = COLOR_PEACH .. "Dostupne komande:\n\n"..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..TOGGLE_RECORD_OBS..COLOR_PEACH.." Ukljucujete/gasite snimanje preko OBS servera!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..RECORD_STATUS..COLOR_PEACH.." Pregledate status snimanja preko OBS-a!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..SET_SKIN..COLOR_PEACH.." Postavite sebi skin!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..SPRINT..COLOR_PEACH.." Ukljucite/iskljucite sprinthook!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..WALLHACK..COLOR_PEACH.." Ukljucite/iskljucite wallhack!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..CRASH..COLOR_PEACH.." Izazovite rusenje igre!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..SPEC..COLOR_PEACH.." Posmatrajte drugog igraca!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..SPECOFF..COLOR_PEACH.." Ugasite spec!"..'\n'..
+    COLOR_PINK.."* "..COLOR_SKYBLUE..ALTC..COLOR_PEACH.." Ugasite alternativni ispis poruka!"..'\n'..
+
+    '\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"
+    for i, modul in ipairs(MGSA_LOADED_MODULES) do
+        if modul.name and modul.desc then
+            INFO = INFO..MGSA_TAB..COLOR_YELLOW..'* '..COLOR_DARK_GREEN..modul.name..MGSA_TAB..COLOR_PEACH..modul.desc..'\n'
+        end
+    end
+
+    if not command or command == "" then
+        MGSA_TRACE("OTVOREN HELP DIJALOG")
+        safe_call(MGSADialog.show,"Informacije",INFO)
+        MGSA_TRACE("ZATVOREN HELP DIJALOG")
+        return
+    end
+
+    MGSA_TRACE("PRIJE IZVRSAVANJA KOMANDE: "..command)
+
+    local res = MGSA_COMMAND_EXECUTE(command, other)
+
+    MGSA_TRACE("NAKON IZVRSAVANJA KOMANDE: "..command)
+
+    if not res then sendErrorMessage("Nepoznata komanda, stisnite Z pa ENTER za info!") end
+
+    MGSA_TRACE("ZAVRSEN MGSA_KOMANDE")
+    return
+end
+-------------------------------------------------------
+---  MGSA ---------------------------------------------
+--- ---------------------------------------------------
+MGSA_LOADED = false
+
+function MGSA_ENTRY()
+    MGSA_DUMP_STACK("ENTRY POZIV")
+    if MGSA_LOADED then return end
+    MGSA_LOADED = true
+
+    MGSA_MAIN_CALLS = (MGSA_MAIN_CALLS or 0) + 1
+
+    MGSA_TRACE("================================")
+    MGSA_TRACE("MAIN START #" .. MGSA_MAIN_CALLS)
+    MGSA_TRACE("MAIN STACK:\n" .. debug.traceback("", 2))
+    MGSA_TRACE("SAMP AVAILABLE: " .. tostring(MGSA_API.isSampAvailable()))
+    print("[MGSA LIFECYCLE] MAIN START #" .. MGSA_MAIN_CALLS)
+
+    print("[MGSA LIFECYCLE] MAIN START: " .. tostring(os.clock()))
+    print("DOBRODOSLI U MIKI'S GTASADMIN!!!!! ------------------")
+    print(MGSA_API.isSampAvailable())
+    repeat MGSA_API.wait(50) until MGSA_API.isSampAvailable()
+    print(MGSA_API.isSampAvailable())
+
+    MGSA_TestChat()
+    MGSA_InspectChatMethods()
+    MGSA_MASSDEBUG()
+    MGSA_TestVersion()
+
+    sendInfoMessage("Pokrenut sistem: Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
+    sendInfoMessage("Koristite komandu '/"..MIKIS_GTASADMIN_HELP.."' za pomoc! [/"..MGSA.."]")
+
+    --sampRegisterChatCommand(MIKIS_GTASADMIN_HELP, MGSA_KOMANDE)
+    --sampRegisterChatCommand(MGSA, MGSA_KOMANDE)
+
+    MGSA_REGISTER_COMMAND({
+        name = RECORD_STATUS,
+        func = MGSAObsConnect.status,
+        warn = false,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = TOGGLE_RECORD_OBS,
+        func = MGSAObsConnect.toggle,
+        warn = false,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = CRASH,
+        func = MGSA_CRASH,
+        warn = false,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = WALLHACK,
+        func = MGSAWallhack.toggle,
+        warn = true,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = SPRINT,
+        func = MGSASprinthookHandle.toggle,
+        warn = true,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = SPECOFF,
+        func = MGSASpecHack.specoff,
+        warn = true,
+        args = false
+    })
+    MGSA_REGISTER_COMMAND({
+        name = SPEC,
+        func = MGSASpecHack.spec,
+        warn = true,
+        args = true
+    })
+    MGSA_REGISTER_COMMAND({
+        name = SET_SKIN,
+        func = MGSASkin.set,
+        warn = true,
+        args = true
+    })
+    MGSA_REGISTER_COMMAND(
+        {
+            name = ALTC,
+            func = MGSAAltChat.toggle,
+            warn = false,
+            args = false
+        }
+    )
+
+    MGSA_SAFE(function()
+        MGSADialog.load()
+        MGSAAltChat.load()
+        MGSAObsConnect.load()
+        MGSAWallhack.load()
+        MGSAAutoBikeSprint.load()
+        MGSASprinthookHandle.load()
+        MGSASpecHack.load()
+        MGSACommandInput.load()
+    end)
+    sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_PEACH.." modula!")
+
+    MGSAAltChat.send(
+        {{
+            text = "Dobrodosli u ",
+            color = ZLATNA
+        },
+        {
+            text = MGSA_PROJECT_NAME.." ",
+            color = TAMNO_ZELENA
+        },
+        {
+            text = "kolekciju esencijalnih skripti!",
+            color = ZUTA
+        }}
+    )
+
+    sendSuccessMessage("Sistemske komande uspjesno registrovane!")
+
+    while true do
+        wait(0)
+        MGSAWallhack.render()
+        MGSASprinthookHandle.loop()
+        MGSAAutoBikeSprint.loop()
+        MGSAWallhack.update()
+        MGSASpecHack.update()
+        MGSAAltChat.loop()
+        MGSAAltChat.update()
+        MGSAAutoBikeSprint.bikeJump()
+        MGSACommandInput.loop()
+        MGSACommandInput.render()
+        --
+        MGSA_API.__LOOP_SAMP_CHAT()
+        MGSA_CHRONO.__PROC()
+        --MGSA_PingAccessTest()
+    end
+end
+
+--////////////////////////////
+function main()
+    MGSA_DUMP_STACK("main()")
+    MGSA_ENTRY()
+end

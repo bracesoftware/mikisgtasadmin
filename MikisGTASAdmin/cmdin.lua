@@ -94,9 +94,9 @@ function __MGSACommandInput__.execute()
         return false
     end
 
-    local success, err = pcall(MGSA_KOMANDE, command)
+    local s, err = pcall(MGSA_KOMANDE, command)
 
-    if not success then
+    if not s then
         print("[MGSA INPUT] Greska: " .. tostring(err))
         return false
     end

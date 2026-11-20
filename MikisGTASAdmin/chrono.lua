@@ -46,7 +46,13 @@ function __MGSAChrono__.__PROC()
                 __MGSAChrono__.timers[id] = nil
             end
 
-            T__.callback(id)
+            local ok, err = pcall(T__.callback, id)
+            if not ok then
+                print("[MGSA] Pukao task ".. id.." -> "..err)
+                if T__.repeating then
+                    __MGSAChrono__.timers[id] = nil
+                end
+            end
         end
     end
 end

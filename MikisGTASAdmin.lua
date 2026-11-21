@@ -141,16 +141,15 @@ local function MGSA_Update()
 
     local VERSION_NOW = 0
     ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
-    if not ok then
+    if not ok or type(result) ~= "number" then
         VERSION_NOW = -1
-    end
-    VERSION_NOW = result
+    else VERSION_NOW = result end
 
     local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
     local ver = MGSA_Download(
         MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/".. MGSA_GITHUB.VERSION,
-        MGSA_ROOT .. MGSA_GITHUB.MANIFEST
+        MGSA_ROOT .. MGSA_GITHUB.VERSION
     )
 
     if not ver then
@@ -159,14 +158,13 @@ local function MGSA_Update()
     end
 
     ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
-    if not ok then
+    if not ok or type(result) ~= "number" then
         VERSION_ON_SERVER = -1
-    end
-    VERSION_ON_SERVER = result
+    else VERSION_ON_SERVER = result end
 
     if VERSION_ON_SERVER == VERSION_NOW then
         print("Nema novih azuriranja!")
-        return false
+        return true
     end
 
     print("[MGSA] NOVI UPDATE: " .. VERSION_ON_SERVER)
@@ -258,18 +256,6 @@ local function MGSA_Update()
         print("[MGSA] INSTALIRAN: " .. rrr)
     end
 
-    local versionFile = io.open(
-        MGSA_ROOT .. "version.txt",
-        "w"
-    )
-
-    if not versionFile then
-        print("[MGSA] NE MOGU ZAPISATI VERSION.TXT!")
-        return false
-    end
-
-    versionFile:write(tostring(remoteVersion))
-    versionFile:close()
 
     print("[MGSA] UPDATE ZAVRSEN!")
 

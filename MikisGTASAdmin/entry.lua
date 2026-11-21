@@ -546,7 +546,7 @@ function MGSA_ENTRY()
         MGSASpecHack.load()
         MGSACommandInput.load()
     end)
-    sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_PEACH.." modula i "..(#MGSA_KOMANDE).." komandi!")
+    sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..tostring(#MGSA_LOADED_MODULES).." modula i "..tostring(#MGSA_KOMANDE).." komandi!")
 
     MGSAAltChat.send(
         {{

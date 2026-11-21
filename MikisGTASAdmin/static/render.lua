@@ -12,8 +12,8 @@
 
 BLUE_LOL = 0xff2596be
 BLUE_AS_SEA = 0xff08679f
-CLOUDY_BLUE = 0xffd4fffe
-
+CLOUDY_BLUE_OLD = 0xffd4fffe
+CLOUDY_BLUE = 0xff93f5f0
 -- Nijanse sive
  SVIJETLO_SIVA = 0xFFD3D3D3
  SIVA          = 0xFF808080

@@ -1,4 +1,4 @@
-function MGSA_Update()
+function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
     createDirectory(MGSA_ROOT)
     local ok
     local result

@@ -128,7 +128,7 @@ function main()
     else
         print("Nije moguce skinuti updater!")
     end
-    local s = MGSA_Update()
+    local s = MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
     if not s then
         print("[MGSA] UPDATE NIJE ZAVRSEN! ENTRY SE NECE POKRENUTI.")
         return

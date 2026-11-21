@@ -635,7 +635,7 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     if notok then
         print("cin.m_bEnabled ~= nil ne postoji!!!")
     end
-    if ok and cin ~= nil and notok then
+    if ok and cin ~= nil and not notok then
         MGSA_CHAT_OPEN = cin.m_bEnabled
     end
 end

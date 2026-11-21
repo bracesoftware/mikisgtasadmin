@@ -631,7 +631,13 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     end
 
     local ok, cin = pcall(MGSA_GetRefObject, MGSA_CInput.RefInputBox)
-    if ok and cin ~= nil then MGSA_CHAT_OPEN = cin.m_bEnabled end
+    local notok = cin.m_bEnabled ~= nil
+    if notok then
+        print("cin.m_bEnabled ~= nil ne postoji!!!")
+    end
+    if ok and cin ~= nil and notok then
+        MGSA_CHAT_OPEN = cin.m_bEnabled
+    end
 end
 
 ----------------------------TESTZ--------------------------------

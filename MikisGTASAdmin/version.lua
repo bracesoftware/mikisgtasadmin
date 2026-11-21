@@ -1,1 +1,1 @@
-return '2.3-beta'
+return '2.3-beta-22'

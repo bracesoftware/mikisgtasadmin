@@ -1,4 +1,4 @@
-function MGSA_Update(githubinf,roooooot)
+function MGSA_Update(githubinf,roooooot,downfunc)
     createDirectory(roooooot)
     local ok
     local result
@@ -15,7 +15,7 @@ function MGSA_Update(githubinf,roooooot)
 
     local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
-    local ver = MGSA_Download(
+    local ver = downfunc(
         githubinf.BASE_URL.."MikisGTASAdmin/".. githubinf.VERSION,
         roooooot .. githubinf.VERSION
     )
@@ -39,7 +39,7 @@ function MGSA_Update(githubinf,roooooot)
     print("[MGSA] SKIDAM UPDATE...")
 
     print("SKIDAM MANIFEST")
-    local manifest = MGSA_Download(
+    local manifest = downfunc(
         githubinf.BASE_URL.."MikisGTASAdmin/"..githubinf.MANIFEST,
         roooooot .. githubinf.MANIFEST
     )
@@ -83,7 +83,7 @@ function MGSA_Update(githubinf,roooooot)
         print("[MGSA] SKIDANJE: " .. rrr)
 
 
-        if not MGSA_Download(
+        if not downfunc(
             githubinf.BASE_URL .. file,
             tt
         ) then

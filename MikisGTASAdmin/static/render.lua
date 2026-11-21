@@ -12,6 +12,7 @@
 
 BLUE_LOL = 0xff2596be
 BLUE_AS_SEA = 0xff08679f
+CLOUDY_BLUE = 0xffd4fffe
 
 -- Nijanse sive
  SVIJETLO_SIVA = 0xFFD3D3D3
@@ -131,8 +132,8 @@ function __MGSARender__.renderVehicleHealthBar(font, hp, x, y)
 end
 
 function MGSA_GET_PING_COLOR(ping)
-    if ping < 50 then return GREEN
-    elseif ping < 80 then return DARK_GREEN
+    if ping < 40 then return CLOUDY_BLUE
+    elseif ping < 70 then return GREEN
     elseif ping < 140 then return YELLOW
     elseif ping < 200 then return ORANGE
     else return CRVENA

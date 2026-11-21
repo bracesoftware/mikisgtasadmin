@@ -64,6 +64,7 @@ COLOR_PEACH      = "{FFDAB9}" -- Blaga pastelna breskva
 COLOR_NEON_PURPLE = "{E040FB}" -- Čista fluorescentna neon ljubičasta
 COLOR_ELECTRIC_VIOLET = "{8A2BE2}" -- Jarka električna ljubičasta
 COLOR_MAGENTA_GLOW  = "{FF00FF}" -- Jarka neon magenta/roza-ljubičasta
+COLOR_BEAUTIFUL_BLUE = "{e4f5f4}"
 -----------KOMANDE_----------------
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
@@ -334,6 +335,8 @@ function MGSA_KOMANDE(params)
         end
     end
 
+    INFO = INFO..'\n\n'..COLOR_BEAUTIFUL_BLUE.."Trenutno instalirana verzija: "..COLOR_RED.."v"..tostring(MGSA_VERSION)
+
     if not command or command == "" then
         MGSA_TRACE("OTVOREN HELP DIJALOG")
         safe_call(MGSADialog.show,"Informacije",INFO)
@@ -381,7 +384,7 @@ function MGSA_ENTRY()
     MGSA_MASSDEBUG()
     MGSA_TestVersion()
 
-    sendInfoMessage("Pokrenut sistem: Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
+    sendInfoMessage("Pokrenut sistem: Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET.."v"..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
     sendInfoMessage("Koristite tipku Z pa ENTER za pomoc! "..COLOR_RED.."[konzola]")
 
     --sampRegisterChatCommand(MIKIS_GTASADMIN_HELP, MGSA_KOMANDE)

@@ -53,28 +53,11 @@ end
 
 local MGSA_GITHUB = {
     BASE_URL = "https://raw.githubusercontent.com/bracesoftware/mikisgtasadmin/main/",
-    VERSION = "version.txt"
+    VERSION = "version.txt",
+    MANIFEST = "manifest.lua"
 }
 local MGSA_ROOT = getWorkingDirectory() .. "\\MikisGTASAdmin\\"
-local MGSA_FILES = {
-    "MikisGTASAdmin/entry.lua",
-    "MikisGTASAdmin/keys.lua",
-    "MikisGTASAdmin/cmdin.lua",
-    "MikisGTASAdmin/chrono.lua",
-    "MikisGTASAdmin/api.lua",
-
-    "MikisGTASAdmin/static/alt.lua",
-    "MikisGTASAdmin/static/bikesprint.lua",
-    "MikisGTASAdmin/static/dialog.lua",
-    "MikisGTASAdmin/static/render.lua",
-    "MikisGTASAdmin/static/skin.lua",
-    "MikisGTASAdmin/static/spec.lua",
-    "MikisGTASAdmin/static/sprinthook.lua",
-    "MikisGTASAdmin/static/wh.lua",
-
-    "MikisGTASAdmin/dynamic/obscfg.lua",
-    "MikisGTASAdmin/dynamic/obsconnect.lua"
-}
+local MGSA_FILES = nil
 
 ------------------------------------------
 local function MGSA_ReadVersion(path)
@@ -176,6 +159,26 @@ local function MGSA_Update()
 
     print("[MGSA] NOVI UPDATE: " .. remoteVersion)
     print("[MGSA] SKIDAM UPDATE...")
+
+    print("SKIDAM MANIFEST")
+    local manifest = MGSA_Download(
+        MGSA_GITHUB.BASE_URL .. "MikisGTASAdmin/" .. MGSA_GITHUB.MANIFEST,
+        MGSA_ROOT .. MGSA_GITHUB.MANIFEST
+    )
+
+    if not manifest then
+        print("Nije moguce preuzeti manifest!")
+        return false
+    end
+
+    local ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.MANIFEST)
+
+    if not ok or type(result) ~= "table" then
+        print("[MGSA] INVALIDAN MANIFEST!")
+        return false
+    end
+
+    MGSA_FILES = result
 
     for _, file in ipairs(MGSA_FILES) do
 

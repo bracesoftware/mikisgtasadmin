@@ -631,6 +631,8 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     end
 
     local ok, cin = pcall(MGSA_GetRefObject, MGSA_CInput.RefInputBox)
+    print(cin)
+    print(cin.m_bEnabled)
     local notok = cin.m_bEnabled ~= nil
     if not ok then
         print("KURAC!")

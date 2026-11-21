@@ -145,6 +145,8 @@ local function MGSA_Update()
         VERSION_NOW = -1
     else VERSION_NOW = result end
 
+    print("Trenutna verzija: v"..VERSION_NOW)
+
     local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
     local ver = MGSA_Download(

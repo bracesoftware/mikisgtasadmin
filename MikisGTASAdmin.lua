@@ -61,7 +61,7 @@ end
 
 local MGSA_GITHUB = {
     BASE_URL = "https://raw.githubusercontent.com/bracesoftware/mikisgtasadmin/main/",
-    VERSION = "version.txt",
+    VERSION = "version.lua",
     MANIFEST = "manifest.lua"
 }
 local MGSA_ROOT = getWorkingDirectory() .. "\\MikisGTASAdmin\\"
@@ -134,43 +134,47 @@ end
 ------------------------------------------
 local function MGSA_Update()
     createDirectory(MGSA_ROOT)
+    local ok
+    local result
 
     print("[MGSA] PROVJERAVAM AZURIRANJA...")
 
-    local remoteVersionPath = MGSA_ROOT .. "version.tmp"
-
-    if not MGSA_Download(
-        MGSA_GITHUB.BASE_URL .. MGSA_GITHUB.VERSION,
-        remoteVersionPath
-    ) then
-        os.remove(remoteVersionPath)
-        print("[MGSA] GITHUB NEDOSTUPAN!")
-        return false
+    local VERSION_NOW = 0
+    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
+    if not ok then
+        VERSION_NOW = -1
     end
+    VERSION_NOW = result
 
-    local remoteVersion = MGSA_ReadVersion(remoteVersionPath)
-    os.remove(remoteVersionPath)
-
-    if remoteVersion <= 0 then
-        print("[MGSA] INVALIDNA VERZIJA!")
-        return false
-    end
-
-    local localVersion = MGSA_ReadVersion(
-        MGSA_ROOT .. "version.txt"
+    local VERSION_ON_SERVER = 0
+    print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
+    local ver = MGSA_Download(
+        MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/".. MGSA_GITHUB.VERSION,
+        MGSA_ROOT .. MGSA_GITHUB.MANIFEST
     )
 
-    if localVersion == remoteVersion then
-        print("[MGSA] SVE JE VEC AZURNO.")
-        return true
+    if not ver then
+        print("Nije moguce preuzeti informacije o verziji!")
+        return false
     end
 
-    print("[MGSA] NOVI UPDATE: " .. remoteVersion)
+    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
+    if not ok then
+        VERSION_ON_SERVER = -1
+    end
+    VERSION_ON_SERVER = result
+
+    if VERSION_ON_SERVER == VERSION_NOW then
+        print("Nema novih azuriranja!")
+        return false
+    end
+
+    print("[MGSA] NOVI UPDATE: " .. VERSION_ON_SERVER)
     print("[MGSA] SKIDAM UPDATE...")
 
     print("SKIDAM MANIFEST")
     local manifest = MGSA_Download(
-        MGSA_GITHUB.BASE_URL .. "MikisGTASAdmin/" .. MGSA_GITHUB.MANIFEST,
+        MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/"..MGSA_GITHUB.MANIFEST,
         MGSA_ROOT .. MGSA_GITHUB.MANIFEST
     )
 
@@ -179,7 +183,7 @@ local function MGSA_Update()
         return false
     end
 
-    local ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.MANIFEST)
+    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.MANIFEST)
 
     if not ok or type(result) ~= "table" then
         print("[MGSA] INVALIDAN MANIFEST!")

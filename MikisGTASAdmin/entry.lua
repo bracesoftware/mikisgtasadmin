@@ -1,11 +1,4 @@
 
-MGSA_VERSION = "0.1"
-MGSA_PROJECT_NAME = "Miki's GTASAdmin"
----------------------------
-script_name(MGSA_PROJECT_NAME)
-script_authors("Mikhail Elyfterov aka Bioxemicar aka DEntisT")
-script_version(MGSA_VERSION)
-
 function MGSA_DUMP_STACK(label)
     MGSA_TRACE("========== STACK: " .. tostring(label) .. " ==========")
 
@@ -95,6 +88,13 @@ end
 function MGSA_STATIC_INCLUDE(text)
     return dofile(getWorkingDirectory().."\\MikisGTASAdmin\\"..text)
 end
+
+MGSA_VERSION = MGSA_STATIC_INCLUDE("version.lua")
+MGSA_PROJECT_NAME = "Miki's GTASAdmin"
+---------------------------
+script_name(MGSA_PROJECT_NAME)
+script_authors("Mikhail Elyfterov aka Bioxemicar aka DEntisT")
+script_version(MGSA_VERSION)
 
 function MGSA_SAFE_GUARD_THAT_IS_SAFE(func, ...)
     local success, err = pcall(func, ...)
@@ -477,6 +477,19 @@ function MGSA_ENTRY()
             text = "kolekciju esencijalnih skripti!",
             color = ZUTA
         }}
+    )
+
+    MGSAAltChat.send(
+        {
+            {
+                text = "Instalirana verzija: ",
+                color = LJUBICASTA
+            },
+            {
+                text = string.format("v%d", MGSA_VERSION),
+                color = BLUE_AS_SEA
+            }
+        }
     )
 
     sendSuccessMessage("Sistemske komande uspjesno registrovane!")

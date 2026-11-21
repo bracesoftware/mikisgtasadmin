@@ -18,7 +18,7 @@ function __MGSAAltChat__.load()
 end
 
 
-function sendAltMessageReal(format)
+local function send____(format)
     if not loaded then return end
     local newformat = {}
     table.insert(newformat, {
@@ -37,7 +37,7 @@ function sendAltMessageReal(format)
 end
 
 function __MGSAAltChat__.send(format)
-    sendAltMessageReal(format)
+    send____(format)
 end
 
 MGSA_ALT_CHAT_CLEAR = 0

@@ -66,7 +66,7 @@ end
 
 function __MGSASpecHack__.spec(arg)
     if not arg or arg == "" then
-        sendWarningMessage("Koristi: /mgsa spec [ID igraca]")
+        sendWarningMessage("Koristi: spec [ID igraca]")
         return
     end
 

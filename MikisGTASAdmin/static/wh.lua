@@ -360,8 +360,6 @@ local function MGSA_COMPLEX_LABEL_RENDER(font,x,y,parts)
     return MGSARender.renderComplexLabel(font,x,y,parts,MGSA_RENDER_ALIGNMENT_CENTER)   
 end
 
-MGSA_WALLHACK = true
-
 function __MGSAWallhack__.toggle()
     MGSA_TRACE("WALLHACK ENTER")
 

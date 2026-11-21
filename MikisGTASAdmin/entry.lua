@@ -80,6 +80,7 @@ SPEC = "spec"
 SPECOFF = "specoff"
 ALTC = "altc"
 BIKE = "bike"
+STATUS = "status"
 
 --------------LIBRARIES-----------
 function MGSA_LOADED_MODULE(module)
@@ -139,6 +140,7 @@ MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_SKYBLUE.."Miki's"..COLOR_PEACH.." GT
 MGSA_SPRINTHOOK = true
 MGSA_ALT_CHAT = true
 MGSA_BIKE_TWEAKS = true
+MGSA_WALLHACK = true
 
 --*************************************************************
 MGSA_AFK_SECONDS = 10
@@ -248,6 +250,48 @@ MGSAObsConnect = MGSA_STATIC_INCLUDE("dynamic/obsconnect.lua")
 
 MGSA_COMMANDS = {}
 function MGSA_REGISTER_COMMAND(cmd)
+    if not cmd or type(cmd) ~= "table" then return end
+
+    if (
+        not cmd.name or
+        type(cmd.name) ~= "string"
+    ) then
+        print("Name for the command isnt valid")
+        return
+    end
+
+    if (
+        not cmd.func or
+        type(cmd.func) ~= "function"
+    ) then
+        print("Function for the command isnt valid")
+        return
+    end
+
+    if (
+        not cmd.warn or
+        type(cmd.warn) ~= "boolean"
+    ) then
+        print("Warning for the command isnt valid")
+        return
+    end
+
+    if (
+        not cmd.args or
+        type(cmd.args) ~= "boolean"
+    ) then
+        print("Args for the command isnt valid")
+        return
+    end
+
+    if (
+        not cmd.desc or
+        type(cmd.desc) ~= "string"
+    ) then
+        print("Name for the command isnt valid")
+        return
+    end
+
     table.insert(MGSA_COMMANDS, cmd)
 end
 function MGSA_COMMAND_EXECUTE(name, ...)
@@ -263,7 +307,7 @@ function MGSA_COMMAND_EXECUTE(name, ...)
 
     if not cmd then return false end
 
-    if not cmd.func and not cmd.warn and not cmd.args then
+    if not cmd.func and not cmd.warn and not cmd.args and not cmd.desc then
         sendWarningMessage("Komanda nije validno registrovana! (Ne posjeduje potrebne parametre)")
         return
     end
@@ -305,6 +349,29 @@ function MGSA_COMMAND_EXECUTE(name, ...)
     return true
 end
 
+local function ISKLJUCENO(INFO)
+    INFO = INFO..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_RED.."Iskljuceno"..COLOR_PEACH.." ]"
+end
+local function UKLJUCENO(INFO)
+    INFO = INFO..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_GREEN.."Ukljuceno"..COLOR_PEACH.." ]"
+end
+local function MODUL(INFO,NAME)
+    INFO = INFO..'\n'..COLOR_PINK.." * "..MGSA_TAB..COLOR_NEON_PURPLE..NAME..MGSA_TAB
+end
+
+function MGSA_STATUS()
+    INFO = COLOR_BEAUTIFUL_BLUE.."Aktivnost modula:"
+    --------------------------------WALLHACK
+    MODUL(INFO, "Wallhack") if MGSA_WALLHACK then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    --------------------------------BIKETWEAKS
+    MODUL(INFO, "Bike Tweaks") if MGSA_BIKE_TWEAKS then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    --------------------------------SPRINTHOOK
+    MODUL(INFO, "Sprinthook") if MGSA_SPRINTHOOK then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    --------------------------------ALTCHAT
+    MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    safe_call(MGSADialog.show, "Aktivnost sistema",INFO)
+end
+
 function MGSA_KOMANDE(params)
     MGSA_TRACE("MGSA_KOMANDE ENTER: "..tostring(params))
     local args = {}
@@ -316,19 +383,12 @@ function MGSA_KOMANDE(params)
     MGSA_TRACE("PARSED COMMAND: " .. tostring(command))
     MGSA_TRACE("COMMAND ARGUMENT: " .. tostring(other))
 
-    INFO = COLOR_PEACH .. "Dostupne komande:\n\n"..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..TOGGLE_RECORD_OBS..COLOR_PEACH.." Ukljucujete/gasite snimanje preko OBS servera!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..RECORD_STATUS..COLOR_PEACH.." Pregledate status snimanja preko OBS-a!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..SET_SKIN..COLOR_PEACH.." Postavite sebi skin!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..SPRINT..COLOR_PEACH.." Ukljucite/iskljucite sprinthook!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..WALLHACK..COLOR_PEACH.." Ukljucite/iskljucite wallhack!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..BIKE..COLOR_PEACH.." Ukljucite/iskljucite bike tweaks-hackove sa biciklom!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..CRASH..COLOR_PEACH.." Izazovite rusenje igre!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..SPEC..COLOR_PEACH.." Posmatrajte drugog igraca!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..SPECOFF..COLOR_PEACH.." Ugasite spec!"..'\n'..
-    COLOR_PINK.."* "..COLOR_SKYBLUE..ALTC..COLOR_PEACH.." Ugasite alternativni ispis poruka!"..'\n'..
+    INFO = COLOR_PEACH .. "Dostupne komande:\n\n"
+    for i, what in ipairs(MGSA_COMMANDS) do
+        INFO = INFO..COLOR_PINK.."* "..COLOR_SKYBLUE..(what.name)..COLOR_PEACH..(what.desc)..'\n'
+    end
 
-    '\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"
+    INFO = INFO..'\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"
     for i, modul in ipairs(MGSA_LOADED_MODULES) do
         if modul.name and modul.desc then
             INFO = INFO..MGSA_TAB..COLOR_YELLOW..'* '..COLOR_DARK_GREEN..modul.name..MGSA_TAB..COLOR_PEACH..modul.desc..'\n'
@@ -394,56 +454,65 @@ function MGSA_ENTRY()
         name = RECORD_STATUS,
         func = MGSAObsConnect.status,
         warn = false,
-        args = false
+        args = false,
+        desc = "Provjerite status snimanja preko OBS servera!"
     })
     MGSA_REGISTER_COMMAND({
         name = TOGGLE_RECORD_OBS,
         func = MGSAObsConnect.toggle,
         warn = false,
-        args = false
+        args = false,
+        desc = "Ukljucite/iskljucite snimanje preko OBS."
     })
     MGSA_REGISTER_COMMAND({
         name = CRASH,
         func = MGSA_CRASH,
         warn = false,
-        args = false
+        args = false,
+        desc = "Srusite igru."
     })
     MGSA_REGISTER_COMMAND({
         name = WALLHACK,
         func = MGSAWallhack.toggle,
         warn = true,
-        args = false
+        args = false,
+        desc = "Ukljucite/iskljucite wallhack."
     })
     MGSA_REGISTER_COMMAND({
         name = SPRINT,
         func = MGSASprinthookHandle.toggle,
         warn = true,
-        args = false
+        args = false,
+        desc = "Ukljucite/iskljucite sprint modul-hackove sa sprintovanjem!"
     })
     MGSA_REGISTER_COMMAND({
         name = SPECOFF,
         func = MGSASpecHack.specoff,
         warn = true,
-        args = false
+        args = false,
+        desc = "Izadjite iz speca."
     })
     MGSA_REGISTER_COMMAND({
         name = SPEC,
         func = MGSASpecHack.spec,
         warn = true,
-        args = true
+        args = true,
+        desc = "Udjite u spec."
     })
     MGSA_REGISTER_COMMAND({
         name = SET_SKIN,
         func = MGSASkin.set,
         warn = true,
-        args = true
+        args = true,
+        desc = "Postavite sebi zeljeni skin!"
     })
     MGSA_REGISTER_COMMAND(
         {
             name = ALTC,
             func = MGSAAltChat.toggle,
             warn = false,
-            args = false
+            args = false,
+            desc = "Ukljucite/iskljucite alternativni chat."
         }
     )
     MGSA_REGISTER_COMMAND(
@@ -451,9 +520,20 @@ function MGSA_ENTRY()
             name = BIKE,
             func = MGSAAutoBikeSprint.toggle,
             warn = true,
-            args = false
+            args = false,
+            desc = "Ukljucite/iskljucite bike tweaks-hackove sa biciklom!"
         }
     )
+    MGSA_REGISTER_COMMAND(
+        {
+            name = STATUS,
+            func = MGSA_STATUS,
+            warn = false,
+            args = false,
+            desc = "Pregledajte aktivnost promjenjivih modula!"
+        }
+    )
+    -------------------------
 
     MGSA_SAFE(function()
         MGSADialog.load()

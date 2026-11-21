@@ -35,7 +35,11 @@ if (
     not MGSA_MEMORY or
     not MGSA_SAMP_API or
     not MGSA_FFI or
-    not MGSA_BIT
+    not MGSA_BIT or
+    not MGSA_BASE64 or
+    not MGSA_SHA or
+    not MGSA_WEBSOCKET or
+    not MGSA_UUID
 ) then
     print("Neki od modula nije ucitan!")
     return

@@ -445,7 +445,7 @@ function MGSA_ENTRY()
     MGSA_MASSDEBUG()
     MGSA_TestVersion()
 
-    sendInfoMessage("Pokrenut sistem: Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET.."v"..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
+    sendInfoMessage("Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET.."v"..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
     sendInfoMessage("Koristite tipku Z pa ENTER za pomoc! "..COLOR_RED.."[konzola]")
 
     --sampRegisterChatCommand(MIKIS_GTASADMIN_HELP, MGSA_KOMANDE)
@@ -546,7 +546,7 @@ function MGSA_ENTRY()
         MGSASpecHack.load()
         MGSACommandInput.load()
     end)
-    sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_PEACH.." modula!")
+    sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_PEACH.." modula i "..(#MGSA_KOMANDE).." komandi!")
 
     MGSAAltChat.send(
         {{
@@ -575,8 +575,6 @@ function MGSA_ENTRY()
             }
         }
     )
-
-    sendSuccessMessage("Sistemske komande uspjesno registrovane!")
 
     while true do
         wait(0)

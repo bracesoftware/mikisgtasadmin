@@ -1,1 +1,1 @@
-return 23908
+return '2.3-beta'

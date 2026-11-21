@@ -64,7 +64,7 @@ COLOR_PEACH      = "{FFDAB9}" -- Blaga pastelna breskva
 COLOR_NEON_PURPLE = "{E040FB}" -- Čista fluorescentna neon ljubičasta
 COLOR_ELECTRIC_VIOLET = "{8A2BE2}" -- Jarka električna ljubičasta
 COLOR_MAGENTA_GLOW  = "{FF00FF}" -- Jarka neon magenta/roza-ljubičasta
-COLOR_BEAUTIFUL_BLUE = "{e4f5f4}"
+COLOR_BEAUTIFUL_BLUE = "{d4fffe}"
 -----------KOMANDE_----------------
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"

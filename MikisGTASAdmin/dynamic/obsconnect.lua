@@ -133,7 +133,7 @@ local function connectOBS()
 end
 
 local function obsRequest(client, requestType)
-    local requestId = uuid()
+    local requestId = MGSA_UUID()
 
     local sent, sendErr = sendJSON(client, {
         op = 6,

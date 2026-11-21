@@ -17,6 +17,7 @@ end
 MGSA_BASE64 = require("base64")
 MGSA_SHA = require("sha2")
 MGSA_WEBSOCKET = require("websocket")
+MGSA_UUID = require("uuid")
 
 --API MODULES
 MGSA_CNetGame = MGSA_SAMP_API.require("CNetGame", true)

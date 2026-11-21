@@ -141,10 +141,7 @@ function main()
         if type(MGSA_ENTRY__) == "function" then
             MGSA_ENTRY__()
         end
-
     else
         print("[MGSA] ULAZNI ENTRY FAJL NIJE DOSTUPAN!")
     end
-
-    return
 end

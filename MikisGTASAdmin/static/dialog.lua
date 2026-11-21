@@ -1,8 +1,9 @@
 local __MGSADialog__ = {}
 
 function __MGSADialog__.show(title, text)
+    sendInfoMessage("Ucitavanje podataka...")
     MGSA_CHRONO.task(
-        0.5,
+        0.3,
         function (id)
             MGSA_API.sampShowDialog(
                 1987324, MESSAGE_HEADER .. " " .. COLOR_ELECTRIC_VIOLET .. title,

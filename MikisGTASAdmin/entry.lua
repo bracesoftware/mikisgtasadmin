@@ -389,6 +389,8 @@ function MGSA_KOMANDE(params)
         INFO = INFO..COLOR_PINK.."* "..COLOR_SKYBLUE..(what.name)..MGSA_TAB..MGSA_TAB..COLOR_PEACH..(what.desc)..'\n'
     end
 
+    INFO = INFO..'\n\n'..COLOR_SKYBLUE.."Sve navedene komande koriste se iskljucivo preko Z konzole!"
+
     INFO = INFO..'\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"
     for i, modul in ipairs(MGSA_LOADED_MODULES) do
         if modul.name and modul.desc then

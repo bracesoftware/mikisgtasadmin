@@ -117,17 +117,16 @@ local function MGSA_Download(url, path)
 end
 
 ------------------------------------------
-
+local updater = MGSA_Download(
+    MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/"..MGSA_GITHUB.UPDATE,
+    MGSA_ROOT .. MGSA_GITHUB.UPDATE
+)
+if updater then
+    dofile(MGSA_ROOT..MGSA_GITHUB.UPDATE)
+else
+    print("Nije moguce skinuti updater!")
+end
 function main()
-    local updater = MGSA_Download(
-        MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/"..MGSA_GITHUB.UPDATE,
-        MGSA_ROOT .. MGSA_GITHUB.UPDATE
-    )
-    if updater then
-        dofile(MGSA_ROOT..MGSA_GITHUB.UPDATE)
-    else
-        print("Nije moguce skinuti updater!")
-    end
     local s = MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
     if not s then
         print("[MGSA] UPDATE NIJE ZAVRSEN! ENTRY SE NECE POKRENUTI.")

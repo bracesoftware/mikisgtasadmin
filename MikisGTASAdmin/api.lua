@@ -629,6 +629,9 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     if not MGSA_SAMP_CHAT_ENABLED then
         __MGSAAPI__.sampCloseChatInput()
     end
+
+    local ok, cin = pcall(MGSA_GetRefObject, MGSA_CInput.RefInputBox)
+    if ok and cin ~= nil then MGSA_CHAT_OPEN = cin.m_bEnabled end
 end
 
 ----------------------------TESTZ--------------------------------

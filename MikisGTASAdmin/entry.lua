@@ -489,7 +489,7 @@ function MGSA_ENTRY()
                 color = LJUBICASTA
             },
             {
-                text = string.format("v%d", MGSA_VERSION),
+                text = string.format("v%s", MGSA_VERSION),
                 color = BLUE_AS_SEA
             }
         }

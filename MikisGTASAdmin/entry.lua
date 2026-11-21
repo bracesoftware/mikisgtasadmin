@@ -136,11 +136,12 @@ MGSA_DIALOG_OPEN = false
 MGSA_CHAT_OPEN = false
 
 MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_SKYBLUE.."Miki's"..COLOR_PEACH.." GTASAdmin"..COLOR_PURPLE .."!:."
-
+--------MODULI
 MGSA_SPRINTHOOK = true
 MGSA_ALT_CHAT = true
 MGSA_BIKE_TWEAKS = true
 MGSA_WALLHACK = true
+MGSA_OBS = true
 
 --*************************************************************
 MGSA_AFK_SECONDS = 10
@@ -369,6 +370,12 @@ function MGSA_STATUS()
     INFO = MODUL(INFO, "Sprinthook") if MGSA_SPRINTHOOK then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------ALTCHAT
     INFO = MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
+    --------------------------------OBS
+    INFO = MODUL(INFO, "SAMP-OBS") if MGSA_OBS then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
+    --------------------------------
+    INFO = INFO..'\n\n'..COLOR_SKYBLUE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
+    ..'\n'.."Pod 'varijabilne' misli se na module koji se mogu gasiti-paliti po potrebi!"
+    ..'\n'.."Sve ucitane module mozete pregledati klikom na 'Z' pa 'Enter'."
 
     safe_call(MGSADialog.show, "Aktivnost sistema",INFO)
 end
@@ -534,6 +541,15 @@ function MGSA_ENTRY()
             warn = false,
             args = false,
             desc = "Pregledajte aktivnost promjenjivih modula!"
+        }
+    )
+    MGSA_REGISTER_COMMAND(
+        {
+            name = "obsm",
+            func = MGSAObsConnect.toggleModule,
+            warn = false,
+            args = false,
+            desc = "Ukljucite/iskljucite SAMP-OBS modul."
         }
     )
     -------------------------

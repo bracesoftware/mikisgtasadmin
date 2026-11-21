@@ -225,6 +225,10 @@ local function runOBSRequest(requestType, successCallback, startMessage)
 end
 
 function __MGSAObsConnect__.toggle()
+    if not MGSA_OBS then
+        sendErrorMessage("Onemogucili ste SAMP-OBS konekciju!")
+        return
+    end
     runOBSRequest(
         function(client)
             -- Prvo provjeri trenutno stanje snimanja.
@@ -268,7 +272,20 @@ function __MGSAObsConnect__.toggle()
     )
 end
 
+function __MGSAObsConnect__.toggleModule()
+    MGSA_OBS = not MGSA_OBS
+    if MGSA_OBS then
+        sendSuccessMessage("Uspjesno ste omogucili SAMP-OBS modul.")
+        return
+    end
+    sendWarningMessage("Onemogucili ste SAMP-OBS modul.")
+end
+
 function __MGSAObsConnect__.status()
+    if not MGSA_OBS then
+        sendErrorMessage("Onemogucili ste SAMP-OBS konekciju!")
+        return
+    end
     runOBSRequest(
         "GetRecordStatus",
         function(result)

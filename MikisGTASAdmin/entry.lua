@@ -555,6 +555,7 @@ function MGSA_ENTRY()
     -------------------------
 
     MGSA_SAFE(function()
+        MGSARender.load()
         MGSADialog.load()
         MGSAAltChat.load()
         MGSAObsConnect.load()
@@ -564,6 +565,7 @@ function MGSA_ENTRY()
         MGSASpecHack.load()
         MGSACommandInput.load()
     end)
+
     sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..tostring(#MGSA_LOADED_MODULES).." modula i "..tostring(#MGSA_COMMANDS).." komandi!")
 
     MGSAAltChat.send(

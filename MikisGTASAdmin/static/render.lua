@@ -180,4 +180,11 @@ function __MGSARender__.renderComplexLabel(font, x, y, parts, alignment)
     end
 end
 
+function __MGSARender__.load()
+    MGSA_LOADED_MODULE({
+        name = "RenderUtils",
+        desc = "Interni modul koji kompletnom sistemu pruza mogucnost efikasnog\n prikazivanja teksta i drugih vizuelnih elemenata."
+    })
+end
+
 return __MGSARender__

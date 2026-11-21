@@ -237,7 +237,12 @@ function __MGSACommandInput__.load()
     if not font then
         font = renderCreateFont("Arial", 10, 1)
     end
-
+    MGSA_LOADED_MODULE(
+        {
+            name = "KomandKonzol",
+            desc = "Interni modul koji implementira komandnu konzolu."
+        }
+    )
     return true
 end
 

@@ -278,7 +278,7 @@ function __MGSAObsConnect__.toggleModule()
         sendSuccessMessage("Uspjesno ste omogucili SAMP-OBS modul.")
         return
     end
-    sendWarningMessage("Onemogucili ste SAMP-OBS modul.")
+    sendWarningMessage("Onemogucili ste SAMP-OBS modul. Sada necete moci koristiti OBS komande dok ih opet ne ukljucite.")
 end
 
 function __MGSAObsConnect__.status()

@@ -349,14 +349,14 @@ function MGSA_COMMAND_EXECUTE(name, ...)
     return true
 end
 
-local function ISKLJUCENO(INFO)
-    INFO = INFO..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_RED.."Iskljuceno"..COLOR_PEACH.." ]"
+local function ISKLJUCENO(locstring)
+    locstring = locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_RED.."Iskljuceno"..COLOR_PEACH.." ]"
 end
-local function UKLJUCENO(INFO)
-    INFO = INFO..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_GREEN.."Ukljuceno"..COLOR_PEACH.." ]"
+local function UKLJUCENO(locstring)
+    locstring = locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_GREEN.."Ukljuceno"..COLOR_PEACH.." ]"
 end
-local function MODUL(INFO,NAME)
-    INFO = INFO..'\n'..COLOR_PINK.." * "..MGSA_TAB..COLOR_NEON_PURPLE..NAME..MGSA_TAB
+local function MODUL(locstring,nnn)
+    locstring = locstring..'\n'..COLOR_PINK.." * "..MGSA_TAB..COLOR_NEON_PURPLE..nnn..MGSA_TAB
 end
 
 function MGSA_STATUS()
@@ -369,6 +369,7 @@ function MGSA_STATUS()
     MODUL(INFO, "Sprinthook") if MGSA_SPRINTHOOK then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
     --------------------------------ALTCHAT
     MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+
     safe_call(MGSADialog.show, "Aktivnost sistema",INFO)
 end
 

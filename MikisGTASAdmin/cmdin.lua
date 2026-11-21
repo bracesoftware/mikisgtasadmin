@@ -21,10 +21,7 @@ local COLORS = {
     footer = 0xFFAAAAAA
 }
 
-local PLACEHOLDER =
-    "Unesite komandu ili pritisnite Enter za pomoc"
-
-
+local PLACEHOLDER = "Unesite komandu ili pritisnite Enter za pomoc!"
 
 function __MGSACommandInput__.isOpen()
     return active
@@ -211,7 +208,7 @@ function __MGSACommandInput__.render()
     end
 
     if math.floor(os.clock() * 2) % 2 == 0 then
-        displayText = displayText .. "_"
+        if inputText ~= "" then displayText = displayText .. "_" end
     end
 
     renderFontDrawText(

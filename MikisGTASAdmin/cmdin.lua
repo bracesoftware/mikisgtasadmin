@@ -83,10 +83,6 @@ function __MGSACommandInput__.execute()
 
     local command = inputText
 
-    if command == "" then
-        wait(100)
-    end
-
     __MGSACommandInput__.close()
 
     if type(MGSA_KOMANDE) ~= "function" then

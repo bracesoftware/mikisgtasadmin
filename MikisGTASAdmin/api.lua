@@ -168,16 +168,6 @@ function __MGSAAPI__.sampShowDialog(dialogId, title, text, button1, button2, dia
     return result
 end
 
-local function __isDialogOpen__()
-    local dialog = MGSA_GetRefObject(MGSA_CDialog.RefDialog)
-
-    if not MGSA_IsValidPointer(dialog) then
-        return false
-    end
-
-    return dialog.m_bIsActive ~= 0
-end
-
 -------------------------------------------------------------------
 
 function __MGSAAPI__.sampIsPlayerConnected(playerId)
@@ -607,7 +597,7 @@ function __MGSAAPI__.isSampChatOpened()
     return MGSA_CHAT_OPEN
 end
 function __MGSAAPI__.isSampDialogOnScreen()
-    return MGSA_DIALOG_OPEN or __isDialogOpen__()
+    return MGSA_DIALOG_OPEN
 end
 
 MGSA_CHRONO.task(
@@ -619,29 +609,23 @@ MGSA_CHRONO.task(
 )
 
 function __MGSAAPI__.__LOOP_SAMP_CHAT()
-    if isKeyDown(MGSA_KEY_T) or isKeyDown(MGSA_KEY_F6) then
-        MGSA_CHAT_OPEN = true
-    elseif isKeyDown(MGSA_KEY_ENTER) or isKeyDown(MGSA_KEY_ESC) then
-        MGSA_CHAT_OPEN = false
-        MGSA_DIALOG_OPEN = false
-    end
-
     if not MGSA_SAMP_CHAT_ENABLED then
         __MGSAAPI__.sampCloseChatInput()
     end
 
+    -----------------------------------------
     local ok, cin = pcall(MGSA_GetRefObject, MGSA_CInput.RefInputBox)
-    print(cin)
-    print(cin.m_bEnabled)
-    local notok = cin.m_bEnabled ~= nil
-    if not ok then
-        print("KURAC!")
+    if ok then
+        if cin ~= nil then
+            MGSA_CHAT_OPEN = cin.m_bEnabled ~= 0
+        end
     end
-    if notok then
-        print("cin.m_bEnabled ~= nil ne postoji!!!")
-    end
-    if ok and cin ~= nil and not notok then
-        MGSA_CHAT_OPEN = cin.m_bEnabled
+    -----------------------------------
+    local ok, dialog = pcall(MGSA_GetRefObject, MGSA_CDialog.RefDialog)
+    if ok then
+        if dialog ~= nil then
+            MGSA_DIALOG_OPEN = dialog.m_bIsActive ~= 0
+        end
     end
 end
 

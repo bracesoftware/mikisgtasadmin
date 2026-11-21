@@ -1,12 +1,12 @@
-function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
-    createDirectory(MGSA_ROOT)
+function MGSA_Update(githubinf,roooooot)
+    createDirectory(roooooot)
     local ok
     local result
 
     print("[MGSA] PROVJERAVAM AZURIRANJA...")
 
     local VERSION_NOW = 0
-    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
+    ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
     if not ok or type(result) ~= "string" then
         VERSION_NOW = -1
     else VERSION_NOW = result end
@@ -16,8 +16,8 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
     local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
     local ver = MGSA_Download(
-        MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/".. MGSA_GITHUB.VERSION,
-        MGSA_ROOT .. MGSA_GITHUB.VERSION
+        githubinf.BASE_URL.."MikisGTASAdmin/".. githubinf.VERSION,
+        roooooot .. githubinf.VERSION
     )
 
     if not ver then
@@ -25,7 +25,7 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
         return false
     end
 
-    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.VERSION)
+    ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
     if not ok or type(result) ~= "string" then
         VERSION_ON_SERVER = -1
     else VERSION_ON_SERVER = result end
@@ -40,8 +40,8 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
 
     print("SKIDAM MANIFEST")
     local manifest = MGSA_Download(
-        MGSA_GITHUB.BASE_URL.."MikisGTASAdmin/"..MGSA_GITHUB.MANIFEST,
-        MGSA_ROOT .. MGSA_GITHUB.MANIFEST
+        githubinf.BASE_URL.."MikisGTASAdmin/"..githubinf.MANIFEST,
+        roooooot .. githubinf.MANIFEST
     )
 
     if not manifest then
@@ -49,7 +49,7 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
         return false
     end
 
-    ok, result = pcall(dofile, MGSA_ROOT .. MGSA_GITHUB.MANIFEST)
+    ok, result = pcall(dofile, roooooot .. githubinf.MANIFEST)
 
     if not ok or type(result) ~= "table" then
         print("[MGSA] INVALIDAN MANIFEST!")
@@ -67,7 +67,7 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
         local dd = rrr:match("^(.*)/[^/]+$")
 
         if dd then
-            local cc = MGSA_ROOT
+            local cc = roooooot
 
             for folder in dd:gmatch("[^/]+") do
                 cc = cc .. folder .. "\\"
@@ -75,7 +75,7 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
             end
         end
 
-        local d = MGSA_ROOT ..
+        local d = roooooot ..
             rrr:gsub("/", "\\")
 
         local tt = d .. ".tmp"
@@ -84,7 +84,7 @@ function MGSA_Update(MGSA_GITHUB,MGSA_ROOT)
 
 
         if not MGSA_Download(
-            MGSA_GITHUB.BASE_URL .. file,
+            githubinf.BASE_URL .. file,
             tt
         ) then
             os.remove(tt)

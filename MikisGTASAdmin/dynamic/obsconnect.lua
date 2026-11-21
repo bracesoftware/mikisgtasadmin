@@ -1,8 +1,3 @@
-local base64 = require "base64"
-local sha = require "sha2"
-local uuid = require "uuid"
-local websocket = require "websocket"
-
 local obsBusy = false
 local activeOBSClient = nil
 local obsShuttingDown = false
@@ -77,7 +72,7 @@ local function connectOBS()
     local client
 
     local createOK, createResult = pcall(function()
-        client = websocket.client.sync{ timeout = 2 }
+        client = MGSA_WEBSOCKET.client.sync{ timeout = 2 }
     end)
 
     if not createOK or not client then
@@ -115,11 +110,11 @@ local function connectOBS()
             return nil, "OBS zahtijeva lozinku, ali lozinka nije postavljena."
         end
 
-        local secretHash = sha.sha256(MGSA_OBS_PASSWORD .. auth.salt)
-        local secretBase64 = base64.encode(sha.hex_to_bin(secretHash))
-        local responseHash = sha.sha256(secretBase64 .. auth.challenge)
+        local secretHash = MGSA_SHA.sha256(MGSA_OBS_PASSWORD .. auth.salt)
+        local secretBase64 = MGSA_BASE64.encode(MGSA_SHA.hex_to_bin(secretHash))
+        local responseHash = MGSA_SHA.sha256(secretBase64 .. auth.challenge)
 
-        identifyData.authentication = base64.encode(sha.hex_to_bin(responseHash))
+        identifyData.authentication = MGSA_BASE64.encode(MGSA_SHA.hex_to_bin(responseHash))
     end
 
     local sent, sendErr = sendJSON(client, { op = 1, d = identifyData })

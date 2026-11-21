@@ -59,7 +59,7 @@ function __MGSACommandInput__.close()
     active = false
     inputText = ""
 
-    MGSA_CHRONO.task(0.5, function ()
+    MGSA_CHRONO.task(0.2, function ()
         MGSA_API.setPlayerControllable(true)
     end, false)
     MGSAAltChat.send(

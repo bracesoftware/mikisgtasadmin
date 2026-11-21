@@ -253,7 +253,7 @@ function MGSA_REGISTER_COMMAND(cmd)
     if not cmd or type(cmd) ~= "table" then return end
 
     if (
-        not cmd.name or
+        cmd.name == nil or
         type(cmd.name) ~= "string"
     ) then
         print("Name for the command isnt valid")
@@ -261,7 +261,7 @@ function MGSA_REGISTER_COMMAND(cmd)
     end
 
     if (
-        not cmd.func or
+        cmd.func == nil or
         type(cmd.func) ~= "function"
     ) then
         print("Function for the command isnt valid")
@@ -269,7 +269,7 @@ function MGSA_REGISTER_COMMAND(cmd)
     end
 
     if (
-        not cmd.warn or
+        cmd.warn == nil or
         type(cmd.warn) ~= "boolean"
     ) then
         print("Warning for the command isnt valid")
@@ -277,7 +277,7 @@ function MGSA_REGISTER_COMMAND(cmd)
     end
 
     if (
-        not cmd.args or
+        cmd.args == nil or
         type(cmd.args) ~= "boolean"
     ) then
         print("Args for the command isnt valid")
@@ -285,7 +285,7 @@ function MGSA_REGISTER_COMMAND(cmd)
     end
 
     if (
-        not cmd.desc or
+        cmd.desc == nil or
         type(cmd.desc) ~= "string"
     ) then
         print("Name for the command isnt valid")
@@ -385,7 +385,7 @@ function MGSA_KOMANDE(params)
 
     INFO = COLOR_PEACH .. "Dostupne komande:\n\n"
     for i, what in ipairs(MGSA_COMMANDS) do
-        INFO = INFO..COLOR_PINK.."* "..COLOR_SKYBLUE..(what.name)..COLOR_PEACH..(what.desc)..'\n'
+        INFO = INFO..COLOR_PINK.."* "..COLOR_SKYBLUE..(what.name)..MGSA_TAB..MGSA_TAB..COLOR_PEACH..(what.desc)..'\n'
     end
 
     INFO = INFO..'\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"

@@ -1,1 +1,1 @@
-return '1.0-r5'
+return '1.0-r6'

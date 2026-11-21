@@ -350,25 +350,25 @@ function MGSA_COMMAND_EXECUTE(name, ...)
 end
 
 local function ISKLJUCENO(locstring)
-    locstring = locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_RED.."Iskljuceno"..COLOR_PEACH.." ]"
+    return locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_RED.."Iskljuceno"..COLOR_PEACH.." ]"
 end
 local function UKLJUCENO(locstring)
-    locstring = locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_GREEN.."Ukljuceno"..COLOR_PEACH.." ]"
+    return locstring..MGSA_TAB..MGSA_TAB..COLOR_PEACH.."[ "..COLOR_GREEN.."Ukljuceno"..COLOR_PEACH.." ]"
 end
 local function MODUL(locstring,nnn)
-    locstring = locstring..'\n'..COLOR_PINK.." * "..MGSA_TAB..COLOR_NEON_PURPLE..nnn..MGSA_TAB
+    return locstring..'\n'..COLOR_PINK.." * "..MGSA_TAB..COLOR_NEON_PURPLE..nnn..MGSA_TAB
 end
 
 function MGSA_STATUS()
     INFO = COLOR_BEAUTIFUL_BLUE.."Aktivnost modula:"
     --------------------------------WALLHACK
-    MODUL(INFO, "Wallhack") if MGSA_WALLHACK then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    INFO = MODUL(INFO, "Wallhack") if MGSA_WALLHACK then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------BIKETWEAKS
-    MODUL(INFO, "Bike Tweaks") if MGSA_BIKE_TWEAKS then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    INFO = MODUL(INFO, "Bike Tweaks") if MGSA_BIKE_TWEAKS then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------SPRINTHOOK
-    MODUL(INFO, "Sprinthook") if MGSA_SPRINTHOOK then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    INFO = MODUL(INFO, "Sprinthook") if MGSA_SPRINTHOOK then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------ALTCHAT
-    MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then UKLJUCENO(INFO) else ISKLJUCENO(INFO) end
+    INFO = MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
 
     safe_call(MGSADialog.show, "Aktivnost sistema",INFO)
 end

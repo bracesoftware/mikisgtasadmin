@@ -95,29 +95,21 @@ function __MGSAMinimap__.loop_()
     if isGamePaused() then return end
     drawMap(MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y)
 end
+
 function __MGSAMinimap__.loop()
     if not MGSA_MINIMAP then return end
     if not radar.texture then return end
     if isGamePaused() then return end
 
-    renderBindTexture(radar.texture)
-    renderColor(0xFFFFFFFF)
-
-    renderBegin(5)
-        renderSetTexCoord(0.0, 0.0)
-        renderVertex(100, 100)
-
-        renderSetTexCoord(1.0, 0.0)
-        renderVertex(450, 100)
-
-        renderSetTexCoord(0.0, 1.0)
-        renderVertex(100, 300)
-
-        renderSetTexCoord(1.0, 1.0)
-        renderVertex(450, 300)
-    renderEnd()
-
-    renderBindTexture(nil)
+    renderDrawTexture(
+        radar.texture,
+        radar.x,
+        radar.y,
+        radar.width,
+        radar.height,
+        0.0,
+        0xFFFFFFFF
+    )
 end
 
 function __MGSAMinimap__.toggle()

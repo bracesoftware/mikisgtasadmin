@@ -67,10 +67,14 @@ end
 
 
 local function getViewHeadingDeg()
-    if doesCharExist and doesCharExist(PLAYER_PED) and getCharHeading then
-        local okH, h = pcall(getCharHeading, PLAYER_PED)
-        if okH and type(h) == "number" then
-            return h
+    if getActiveCameraPointAt and getActiveCameraCoordinates and getHeadingFromVector2d then
+        local ok1, x1, y1 = pcall(getActiveCameraPointAt)
+        local ok2, x2, y2 = pcall(getActiveCameraCoordinates)
+        if ok1 and ok2 and x1 and y1 and x2 and y2 then
+            local okH, h = pcall(getHeadingFromVector2d, x1 - x2, y1 - y2)
+            if okH and type(h) == "number" then
+                return h
+            end
         end
     end
 

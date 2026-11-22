@@ -10,7 +10,7 @@ local radar = {
 local WORLD_SIZE = 6000.0
 
 function __MGSAMinimap__.load()
-    radar.maptexture = getWorkingDirectory() .. "MikisGTASAdmin/resources/map.png"
+    radar.maptexture = getWorkingDirectory() .. "/MikisGTASAdmin/resources/map.png"
     MGSA_LOADED_MODULE(
         {
             name = "Minimap",

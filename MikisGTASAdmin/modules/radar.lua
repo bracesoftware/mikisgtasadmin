@@ -33,7 +33,7 @@ local function getRadarRect()
     return x, y, w, h
 end
 
-local function getViewHeadingDeg()
+local function getViewHeadingDegComplex()
     if isCharInAnyCar and doesCharExist and doesCharExist(PLAYER_PED) and isCharInAnyCar(PLAYER_PED) then
         local ok, car = pcall(storeCarCharIsInNoSave, PLAYER_PED)
         if ok and car and doesVehicleExist and doesVehicleExist(car) then
@@ -55,6 +55,18 @@ local function getViewHeadingDeg()
         end
     end
 
+    if doesCharExist and doesCharExist(PLAYER_PED) and getCharHeading then
+        local okH, h = pcall(getCharHeading, PLAYER_PED)
+        if okH and type(h) == "number" then
+            return h
+        end
+    end
+
+    return 0.0
+end
+
+
+local function getViewHeadingDeg()
     if doesCharExist and doesCharExist(PLAYER_PED) and getCharHeading then
         local okH, h = pcall(getCharHeading, PLAYER_PED)
         if okH and type(h) == "number" then

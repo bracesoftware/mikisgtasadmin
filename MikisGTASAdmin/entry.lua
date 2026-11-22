@@ -69,7 +69,7 @@ COLOR_BEAUTIFUL_BLUE = "{d4fffe}"
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
 MGSA_PLAYER_POS = {
-    x=0,y=0,z=0
+    x = 0, y = 0, z = 0
 }
 --KOMANDE
 SET_SKIN = "setskin"

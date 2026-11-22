@@ -139,9 +139,9 @@ function main()
     else
         print("Nije moguce skinuti updater!")
     end
-    local s = MGSA_Update(MGSA_GITHUB,MGSA_ROOT,MGSA_Download)
-    if not s then
-        print("[MGSA] UPDATE NIJE ZAVRSEN! ENTRY SE NECE POKRENUTI.")
+    local ok, res = pcall(MGSA_Update,MGSA_GITHUB,MGSA_ROOT,MGSA_Download)
+    if not ok or not res then
+        print("[MGSA] UPDATE NIJE ZAVRSEN! ENTRY SE NECE POKRENUTI -> "..tostring(res))
         return
     end
     local entry = MGSA_ROOT .. "entry.lua"

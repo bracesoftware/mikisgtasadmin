@@ -182,6 +182,28 @@ function MGSA_Update(githubinf,roooooot,downfunc)
         MGSA_SAMPMSG("Instalirano: " .. rrr)
     end
 
+    local mainfile = "MikisGTASAdmin.lua"
+    local tempFile = roooooot .. mainfile .. ".tmp"
+    local mainPath = getWorkingDirectory() .. "\\" .. mainfile
+
+    local ah = downfunc(
+        githubinf.BASE_URL .. mainfile,
+        tempFile
+    )
+
+    if ah then
+        os.remove(mainPath)
+
+        local renamed = os.rename(tempFile, mainPath)
+
+        if renamed then
+            MGSA_SAMPMSG("Uspjesno azuriran boot fajl.")
+        else
+            MGSA_SAMPMSG("Nije moguce zamijeniti glavni fajl.")
+        end
+    else
+        MGSA_SAMPMSG("Nije uspesno azuriran glavni fajl.")
+    end
 
     MGSA_SAMPMSG("Update uspjesno zavrsen!")
 

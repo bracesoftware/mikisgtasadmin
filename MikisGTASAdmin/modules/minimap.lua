@@ -37,7 +37,7 @@ local function worldToMap(x,y)
     return (x + WORLD_SIZE / 2) / WORLD_SIZE, (-y + WORLD_SIZE / 2) / WORLD_SIZE
 end
 
-local function drawMapOld(centerX, centerY)
+local function drawMap(centerX, centerY)
     local ratio = radar.width / radar.height
     local centerU, centerV = worldToMap(centerX, centerY)
     local halfU, halfV
@@ -76,33 +76,10 @@ local function drawMapOld(centerX, centerY)
     --renderBindTexture(nil)
 end
 
-local function drawMap()
-    if not radar.texture then return end
-
-    renderBindTexture(radar.texture)
-    renderColor(0xFFFFFFFF)
-
-    renderBegin(5)
-
-        renderSetTexCoord(0.0, 0.0)
-        renderVertex(radar.x, radar.y)
-
-        renderSetTexCoord(1.0, 0.0)
-        renderVertex(radar.x + radar.width, radar.y)
-
-        renderSetTexCoord(0.0, 1.0)
-        renderVertex(radar.x, radar.y + radar.height)
-
-        renderSetTexCoord(1.0, 1.0)
-        renderVertex(radar.x + radar.width, radar.y + radar.height)
-
-    renderEnd()
-end
-
 function __MGSAMinimap__.loop()
     if not MGSA_MINIMAP then return end
-    --if not radar.texture then return end
-    --if isGamePaused() then return end
+    if not radar.texture then return end
+    if isGamePaused() then return end
     drawMap(MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y)
 end
 

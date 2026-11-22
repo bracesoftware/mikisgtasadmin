@@ -1,14 +1,56 @@
+--provjerava validnost pointera
+local function __0(pointer)
+    return pointer ~= nil and pointer ~= MGSA_FFI.NULL
+end
+--vraca verziju
+local function __1()
+    if not MGSA_SAMP_API or
+       type(MGSA_SAMP_API.GetSAMPVersion) ~= "function" then
+        return nil
+    end
+
+    local ok, version = pcall(MGSA_SAMP_API.GetSAMPVersion)
+
+    if not ok then
+        return nil
+    end
+
+    return version
+end
+--validan pointer
+local function __2(refFunction)
+    if type(refFunction) ~= "function" then
+        return nil
+    end
+
+    local ok, pointer = pcall(refFunction)
+
+    if not ok or not __0(pointer) then
+        return nil
+    end
+
+    if __1() == 3 then
+        local derefOk, object = pcall(function()
+            return pointer[0]
+        end)
+
+        if not derefOk or not __0(object) then
+            return nil
+        end
+
+        return object
+    end
+
+    return pointer
+end
 function MGSA_SAMPMSG(text)
-    local chatRX = MGSA_CChat.RefChat
-    local chatDL = chatRX[0]
+    local chat = __2(MGSA_CChat.RefChat)
     print("MGSA_SAMPMSG: "..text)
     text = "[Miki's GTASAdmin]: "..text
     pcall(function (t)
-        chatRX:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
+        chat:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
     end, text)
-    pcall(function (t)
-        chatDL:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
-    end, text)
+
 end
 
 function MGSA_Update(githubinf,roooooot,downfunc)

@@ -361,7 +361,7 @@ local function MGSA_RENDER_STICKMAN(ped, color)
 
     MGSARender.drawCircle(
         headinfo.firstpos.x, headinfo.firstpos.y,
-        headinfo.distance, MGSA_STICKMAN_COLOR, 32
+        headinfo.distance * 4, MGSA_STICKMAN_COLOR, 32
     )
 end
 

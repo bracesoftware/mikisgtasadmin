@@ -112,15 +112,15 @@ local function drawRadar()
     local radiusPx = math.min(rw, rh) * 0.46
 
     MGSARender.drawCircle(
-        cx, cy, 5, 0x26FFFFFF, 64
+        cx, cy, 60, 0x26FFFFFF, 64
     )
 
     MGSARender.drawCircle(
-        cx, cy, 10, 0x26FFFFFF, 64
+        cx, cy, 100, 0x26FFFFFF, 64
     )
 
     MGSARender.drawCircle(
-        cx, cy, 25, 0x26FFFFFF, 64
+        cx, cy, 200, 0x26FFFFFF, 64
     )
 
     renderDrawBox(rx - 2, ry - 2, rw + 4, rh + 4, 0xE610141A)

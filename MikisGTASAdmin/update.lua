@@ -43,6 +43,7 @@ local function __2(refFunction)
 
     return pointer
 end
+--Salje SAMP poruku u chat.
 function MGSA_SAMPMSG(text)
     local chat = __2(MGSA_CChat.RefChat)
     print("MGSA_SAMPMSG: "..text)
@@ -52,7 +53,7 @@ function MGSA_SAMPMSG(text)
     end, text)
 
 end
-
+--Pokrece azuriranje kompletnog sistema!
 function MGSA_Update(githubinf,roooooot,downfunc)
     createDirectory(roooooot)
     local ok

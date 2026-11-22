@@ -2,7 +2,7 @@ local __MGSAMinimap__ = {}
 
 local radar = {
     texture = nil,
-    x=20,y=820,width=350,height=200,
+    x=45,y=820,width=320,height=220,
     scale = 0.1,
     maptexture = nil
 }
@@ -17,6 +17,7 @@ function __MGSAMinimap__.load()
             desc = "Prikazuje malu mapu sa pozicijama okolnih igrača!"
         }
     )
+    print(radar.maptexture)
     radar.texture = renderLoadTextureFromFile(radar.maptexture)
     if not radar.texture then
         print("NE VALJA PATH ILI TEXTURA")

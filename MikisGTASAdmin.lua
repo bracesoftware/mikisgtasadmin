@@ -71,6 +71,15 @@ local MGSA_FILES = nil
 ------------------------------------------
 
 local function MGSA_Download(url, path)
+    local folder = path:match("^(.*)\\[^\\]+$")
+
+    if folder then
+        createDirectory(folder)
+    end
+
+    print("[MGSA] DOWNLOAD URL: " .. url)
+    print("[MGSA] DOWNLOAD PATH: " .. path)
+
     local finished = false
     local success = false
 

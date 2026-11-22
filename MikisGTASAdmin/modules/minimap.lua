@@ -10,19 +10,31 @@ local radar = {
 local WORLD_SIZE = 6000.0
 
 function __MGSAMinimap__.load()
-    radar.maptexture = getWorkingDirectory() .. "/MikisGTASAdmin/resources/map.png"
-    MGSA_LOADED_MODULE(
-        {
-            name = "Minimap",
-            desc = "Prikazuje malu mapu sa pozicijama okolnih igrača!"
-        }
-    )
-    print(radar.maptexture)
-    radar.texture = renderLoadTextureFromFile(radar.maptexture)
-    if not radar.texture then
-        print("NE VALJA PATH ILI TEXTURA")
+    radar.maptexture = getWorkingDirectory() ..
+        "\\MikisGTASAdmin\\resources\\map.png"
+
+    print("[MINIMAP] PATH: " .. radar.maptexture)
+    print("[MINIMAP] FILE EXISTS: " ..
+        tostring(doesFileExist(radar.maptexture)))
+
+    if not doesFileExist(radar.maptexture) then
+        print("[MINIMAP] MAP.PNG NIJE PRONADJEN!")
         return false
     end
+
+    radar.texture = renderLoadTextureFromFile(radar.maptexture)
+
+    print("[MINIMAP] TEXTURE: " .. tostring(radar.texture))
+
+    if not radar.texture then
+        print("[MINIMAP] GRESKA PRI UCITAVANJU TEKSTURE!")
+        return false
+    end
+
+    MGSA_LOADED_MODULE({
+        name = "Minimap",
+        desc = "Prikazuje malu mapu sa pozicijama okolnih igraca!"
+    })
 
     return true
 end

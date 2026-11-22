@@ -67,7 +67,7 @@ MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SM
 
 local __MGSARender__ = {}
 
-function __MGSARender__.drawCircle(x, y, radius, color, segments)
+function __MGSARender__.drawCircleWithThickness(x, y, radius, color, segments, thickness)
     segments = segments or 48
 
     for i = 0, segments - 1 do
@@ -80,8 +80,12 @@ function __MGSARender__.drawCircle(x, y, radius, color, segments)
         local x2 = x + math.cos(a2) * radius
         local y2 = y + math.sin(a2) * radius
 
-        renderDrawLine(x1, y1, x2, y2, 1.5, color)
+        renderDrawLine(x1, y1, x2, y2, thickness, color)
     end
+end
+
+function __MGSARender__.drawCircle(x,y,r,c,s)
+    __MGSARender__.drawCircleWithThickness(x,y,r,c,s,1.5)
 end
 -----------------------
 

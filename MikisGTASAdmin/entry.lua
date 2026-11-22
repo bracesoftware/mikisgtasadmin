@@ -464,7 +464,7 @@ function MGSA_ENTRY()
     MGSA_MASSDEBUG()
     MGSA_TestVersion()
 
-    sendInfoMessage("Miki's GTA SAdmin".." "..COLOR_ELECTRIC_VIOLET.."v"..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
+    sendInfoMessage(MGSA_TAB..COLOR_ELECTRIC_VIOLET.."v"..MGSA_VERSION..COLOR_GOLD.." by Mikhail Elyfterov")
     sendInfoMessage("Koristite tipku Z pa ENTER za pomoc! "..COLOR_RED.."[konzola]")
 
     --sampRegisterChatCommand(MIKIS_GTASADMIN_HELP, MGSA_KOMANDE)

@@ -618,6 +618,7 @@ function MGSA_ENTRY()
 
     while true do
         MGSA_UPDATE()
+        --
         wait(0)
         MGSAWallhack.render()
         MGSASprinthookHandle.loop()

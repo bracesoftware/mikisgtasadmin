@@ -1,1 +1,1 @@
-return '0.0.1-r5-alpha'
+return '0.0.1-r6-alpha'

@@ -62,15 +62,15 @@ function MGSA_Update(githubinf,roooooot,downfunc)
     print("[MGSA] PROVJERAVAM AZURIRANJA...")
     MGSA_SAMPMSG("Provjeravam azuriranja...")
 
-    local VERSION_NOW = 0
+    local VERSION_NOW = "-"
+    local VERSION_ON_SERVER = "--"
+
     ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
-    if not ok or type(result) ~= "string" then
-        VERSION_NOW = "-"
-    else VERSION_NOW = result end
+    if ok or type(result) == "string" then
+        VERSION_NOW = result
+    end
 
     print("Trenutna verzija: v"..VERSION_NOW)
-
-    local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
     MGSA_SAMPMSG("Skidam informacije o novom azuriranju!")
     local ver = downfunc(
@@ -84,9 +84,9 @@ function MGSA_Update(githubinf,roooooot,downfunc)
     end
 
     ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
-    if not ok or type(result) ~= "string" then
-        VERSION_ON_SERVER = "-"
-    else VERSION_ON_SERVER = result end
+    if ok or type(result) == "string" then
+        VERSION_ON_SERVER = result
+    end
 
     if VERSION_ON_SERVER == VERSION_NOW then
         MGSA_SAMPMSG("Nema novih azuriranja!")

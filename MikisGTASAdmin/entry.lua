@@ -144,7 +144,7 @@ MGSA_ALT_CHAT = true
 MGSA_BIKE_TWEAKS = true
 MGSA_WALLHACK = true
 MGSA_OBS = true
-MGSA_MINIMAP = true
+MGSA_MINIRADAR = true
 
 --*************************************************************
 MGSA_AFK_SECONDS = 10
@@ -247,7 +247,7 @@ MGSASpecHack = MGSA_STATIC_INCLUDE("modules/spec.lua")
 
 MGSA_STATIC_INCLUDE("dynamic/obscfg.lua")
 MGSAObsConnect = MGSA_STATIC_INCLUDE("modules/obsconnect.lua")
-MGSAMinimap = MGSA_STATIC_INCLUDE("modules/minimap.lua")
+MGSAMiniRadar = MGSA_STATIC_INCLUDE("modules/radar.lua")
 
 -------------------------------------------------------
 ---  MGSA ---------------------------------------------
@@ -377,7 +377,7 @@ function MGSA_STATUS()
     --------------------------------OBS
     INFO = MODUL(INFO, "SAMP-OBS") if MGSA_OBS then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------OBS
-    INFO = MODUL(INFO, "Minimap") if MGSA_MINIMAP then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
+    INFO = MODUL(INFO, "MiniRadar") if MGSA_MINIRADAR then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------
     INFO = INFO..'\n\n'..COLOR_SKYBLUE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
     ..'\n'.."Pod 'varijabilne' misli se na module koji se mogu gasiti-paliti po potrebi!"
@@ -564,11 +564,11 @@ function MGSA_ENTRY()
     )
     MGSA_REGISTER_COMMAND(
         {
-            name = "minimap",
-            func = MGSAMinimap.toggle,
+            name = "radar",
+            func = MGSAMiniRadar.toggle,
             warn = false,
             args = false,
-            desc = "Ukljucite/iskljucite minimap modul."
+            desc = "Ukljucite/iskljucite mini-radar modul."
         }
     )
     -------------------------
@@ -583,7 +583,7 @@ function MGSA_ENTRY()
         MGSASprinthookHandle.load()
         MGSASpecHack.load()
         MGSACommandInput.load()
-        MGSAMinimap.load()
+        MGSAMiniRadar.load()
     end)
 
     sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..tostring(#MGSA_LOADED_MODULES).." modula i "..tostring(#MGSA_COMMANDS).." komandi!")
@@ -630,7 +630,7 @@ function MGSA_ENTRY()
         MGSAAutoBikeSprint.bikeJump()
         MGSACommandInput.loop()
         MGSACommandInput.render()
-        MGSAMinimap.loop()
+        MGSAMiniRadar.loop()
         --
         MGSA_API.__LOOP_SAMP_CHAT()
         MGSA_CHRONO.__PROC()

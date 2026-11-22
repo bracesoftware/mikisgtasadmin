@@ -16,8 +16,5 @@ return {
     "MikisGTASAdmin/modules/sprinthook.lua",
     "MikisGTASAdmin/modules/wh.lua",
     "MikisGTASAdmin/modules/obsconnect.lua",
-    "MikisGTASAdmin/modules/minimap.lua",
-
-    -------RESOURCES
-    "MikisGTASAdmin/resources/map.png"
+    "MikisGTASAdmin/modules/radar.lua"
 }

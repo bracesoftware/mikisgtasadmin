@@ -338,6 +338,11 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     end
     local dis = info.distance
 
+    MGSARender.drawCircleWithThickness(
+        headinfo.firstpos.x, headinfo.firstpos.y - headinfo.distance * 2,
+        dis / 4, MGSA_STICKMAN_COLOR, 32, 4.0
+    )
+
     if isCharInAnyCar(ped) then
         return
     end
@@ -358,11 +363,6 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, TOP_RIGHT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, BOTTOM_LEFT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_RIGHT, BOTTOM_RIGHT, 1.0, col)
-
-    MGSARender.drawCircleWithThickness(
-        headinfo.firstpos.x, headinfo.firstpos.y - headinfo.distance * 2,
-        headinfo.distance * 4, MGSA_STICKMAN_COLOR, 32, 4.0
-    )
 end
 
 

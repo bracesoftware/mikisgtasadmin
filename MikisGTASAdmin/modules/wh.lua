@@ -274,7 +274,17 @@ local function MGSA_DRAW_INDIVIDUAL_BONE(ped, bone1, bone2, color)
     local dx = math.abs(sx1 - sx2)
     local dy = math.abs(sy1 - sy2)
 
-    return math.sqrt(dx * dx + dy * dy)
+    return {
+        distance = math.sqrt(dx * dx + dy * dy),
+        firstpos = {
+            x = sx1,
+            y = sy1
+        },
+        secondpos = {
+            x = sx2,
+            y = sy2
+        }
+    }
 end
 
 local function MGSA_DRAWLINE_POINTS(point1, point2, thickness, col)
@@ -303,8 +313,8 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     local BONE_RIGHT_KNEE    = 42
     local BONE_RIGHT_FOOT    = 43
 
-    MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_HEAD, BONE_NECK, color)
-    local dis = MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_NECK, BONE_SPINE, color)
+    local headinfo = MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_HEAD, BONE_NECK, color)
+    local info = MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_NECK, BONE_SPINE, color)
     MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_SPINE, BONE_PELVIS, color)
 
     MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_RIGHT_SHOULDER, BONE_LEFT_SHOULDER, color)
@@ -322,6 +332,12 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_PELVIS, BONE_RIGHT_HIP, color)
     MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_RIGHT_HIP, BONE_RIGHT_KNEE, color)
     MGSA_DRAW_INDIVIDUAL_BONE(ped, BONE_RIGHT_KNEE, BONE_RIGHT_FOOT, color)
+    if not info or not headinfo then
+        print("KRITICNO!!")
+        return
+    end
+    local dis = info.distance
+
     if isCharInAnyCar(ped) then
         return
     end
@@ -342,6 +358,11 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, TOP_RIGHT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, BOTTOM_LEFT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_RIGHT, BOTTOM_RIGHT, 1.0, col)
+
+    MGSARender.drawCircle(
+        headinfo.firstpos.x, headinfo.firstpos.y,
+        headinfo.distance, MGSA_STICKMAN_COLOR, 32
+    )
 end
 
 

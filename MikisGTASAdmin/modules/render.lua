@@ -67,6 +67,24 @@ MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SM
 
 local __MGSARender__ = {}
 
+function __MGSARender__.drawCircle(x, y, radius, color, segments)
+    segments = segments or 48
+
+    for i = 0, segments - 1 do
+        local a1 = (i / segments) * math.pi * 2
+        local a2 = ((i + 1) / segments) * math.pi * 2
+
+        local x1 = x + math.cos(a1) * radius
+        local y1 = y + math.sin(a1) * radius
+
+        local x2 = x + math.cos(a2) * radius
+        local y2 = y + math.sin(a2) * radius
+
+        renderDrawLine(x1, y1, x2, y2, 1.5, color)
+    end
+end
+-----------------------
+
 MGSA_RENDER_ALIGNMENT_LEFT = 0
 MGSA_RENDER_ALIGNMENT_CENTER = 1
 

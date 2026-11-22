@@ -33,39 +33,6 @@ local function getRadarRect()
     return x, y, w, h
 end
 
-local function getViewHeadingDegComplex()
-    if isCharInAnyCar and doesCharExist and doesCharExist(PLAYER_PED) and isCharInAnyCar(PLAYER_PED) then
-        local ok, car = pcall(storeCarCharIsInNoSave, PLAYER_PED)
-        if ok and car and doesVehicleExist and doesVehicleExist(car) then
-            local okH, h = pcall(getCarHeading, car)
-            if okH and type(h) == "number" then
-                return h
-            end
-        end
-    end
-
-    if getActiveCameraPointAt and getActiveCameraCoordinates and getHeadingFromVector2d then
-        local ok1, x1, y1 = pcall(getActiveCameraPointAt)
-        local ok2, x2, y2 = pcall(getActiveCameraCoordinates)
-        if ok1 and ok2 and x1 and y1 and x2 and y2 then
-            local okH, h = pcall(getHeadingFromVector2d, x1 - x2, y1 - y2)
-            if okH and type(h) == "number" then
-                return h
-            end
-        end
-    end
-
-    if doesCharExist and doesCharExist(PLAYER_PED) and getCharHeading then
-        local okH, h = pcall(getCharHeading, PLAYER_PED)
-        if okH and type(h) == "number" then
-            return h
-        end
-    end
-
-    return 0.0
-end
-
-
 local function getViewHeadingDeg()
     if getActiveCameraPointAt and getActiveCameraCoordinates and getHeadingFromVector2d then
         local ok1, x1, y1 = pcall(getActiveCameraPointAt)
@@ -81,9 +48,9 @@ local function getViewHeadingDeg()
     return 0.0
 end
 
-local function worldToRadarRelative(wx, wy, myX, myY, cx, cy, radiusPx)
-    local dx = (wx - myX) / radar.range
-    local dy = (wy - myY) / radar.range
+local function worldToRadarRelative(wx, wy, myx, myy, cx, cy, radiusPx)
+    local dx = (wx - myx) / radar.range
+    local dy = (wy - myy) / radar.range
     local sx = cx + dx * radiusPx
     local sy = cy - dy * radiusPx
     return sx, sy
@@ -128,13 +95,13 @@ end
 
 local function drawPlayerId(id, sx, sy, col)
     if not id or id < 0 then return end
-        renderFontDrawText(MGSA_FONT_SMALL, tostring(id), math.floor(sx + 6), math.floor(sy - 6), col)
+    renderFontDrawText(MGSA_FONT_SMALL, tostring(id), math.floor(sx + 6), math.floor(sy - 6), col)
 end
 
 function __MGSAMiniRadar__.load()
     MGSA_LOADED_MODULE({
         name = "MiniRadar",
-        desc = "Radar sa pozicijom igraca, smjerom gledanja, bojom nicka i ID-evima!"
+        desc = "Jednostavan sistem radara koji otkriva poziciju okolnih igraca!"
     })
 end
 
@@ -143,6 +110,18 @@ local function drawRadar()
     local cx = rx + rw * 0.5
     local cy = ry + rh * 0.5
     local radiusPx = math.min(rw, rh) * 0.46
+
+    MGSARender.drawCircle(
+        cx, cy, 5, 0x26FFFFFF, 64
+    )
+
+    MGSARender.drawCircle(
+        cx, cy, 10, 0x26FFFFFF, 64
+    )
+
+    MGSARender.drawCircle(
+        cx, cy, 25, 0x26FFFFFF, 64
+    )
 
     renderDrawBox(rx - 2, ry - 2, rw + 4, rh + 4, 0xE610141A)
     renderDrawBox(rx, ry, rw, rh, 0xB3161C24)
@@ -169,7 +148,7 @@ local function drawRadar()
                     end
                     renderDrawBox(sx - half - 1, sy - half - 1, radar.dotSize + 2, radar.dotSize + 2, 0xE6000000)
                     renderDrawBox(sx - half, sy - half, radar.dotSize, radar.dotSize, nick)
-                    drawPlayerId(id, sx, sy, nick)
+                    drawPlayerId(id, sx, sy, 0xffffffff)
                 end
             end
         end

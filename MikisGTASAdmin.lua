@@ -77,6 +77,8 @@ local function MGSA_Download(url, path)
     os.remove(path)
 
     downloadUrlToFile(url, path, function(id, status)
+        print("MGSA Download -> id -> "..tostring(id))
+        print("MGSA Download -> status -> "..tostring(status))
         if status == 6 then
             finished = true
             success = true

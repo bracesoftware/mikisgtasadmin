@@ -67,6 +67,7 @@ local function drawMap(centerX, centerY)
     local u2 = centerU + halfU
     local v2 = centerV + halfV
 
+    useRenderCommands(true)
     renderBindTexture(radar.texture)
     renderColor(0xFFFFFFFF)
 
@@ -89,27 +90,11 @@ local function drawMap(centerX, centerY)
     --renderBindTexture(nil)
 end
 
-function __MGSAMinimap__.loop_()
-    if not MGSA_MINIMAP then return end
-    if not radar.texture then return end
-    if isGamePaused() then return end
-    drawMap(MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y)
-end
-
 function __MGSAMinimap__.loop()
     if not MGSA_MINIMAP then return end
     if not radar.texture then return end
     if isGamePaused() then return end
-
-    renderDrawTexture(
-        radar.texture,
-        radar.x,
-        radar.y,
-        radar.width,
-        radar.height,
-        0.0,
-        0xFFFFFFFF
-    )
+    drawMap(MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y)
 end
 
 function __MGSAMinimap__.toggle()

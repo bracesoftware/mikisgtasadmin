@@ -5,15 +5,19 @@ return {
     "MikisGTASAdmin/chrono.lua",
     "MikisGTASAdmin/api.lua",
 
-    "MikisGTASAdmin/static/alt.lua",
-    "MikisGTASAdmin/static/bikesprint.lua",
-    "MikisGTASAdmin/static/dialog.lua",
-    "MikisGTASAdmin/static/render.lua",
-    "MikisGTASAdmin/static/skin.lua",
-    "MikisGTASAdmin/static/spec.lua",
-    "MikisGTASAdmin/static/sprinthook.lua",
-    "MikisGTASAdmin/static/wh.lua",
-
     "MikisGTASAdmin/dynamic/obscfg.lua",
-    "MikisGTASAdmin/dynamic/obsconnect.lua"
+
+    "MikisGTASAdmin/modules/alt.lua",
+    "MikisGTASAdmin/modules/bikesprint.lua",
+    "MikisGTASAdmin/modules/dialog.lua",
+    "MikisGTASAdmin/modules/render.lua",
+    "MikisGTASAdmin/modules/skin.lua",
+    "MikisGTASAdmin/modules/spec.lua",
+    "MikisGTASAdmin/modules/sprinthook.lua",
+    "MikisGTASAdmin/modules/wh.lua",
+    "MikisGTASAdmin/modules/obsconnect.lua",
+    "MikisGTASAdmin/modules/minimap.lua",
+
+    -------RESOURCES
+    "MikisGTASAdmin.Resources/map.png"
 }

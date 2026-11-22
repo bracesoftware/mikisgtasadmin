@@ -12,15 +12,12 @@ local lastTime = 0
 --------------------------------------------------------
 function __MGSAWallhack__.update()
     local currentTime = os.clock()
-    
     if currentTime - lastTime >= 0.76 then
         lastTime = currentTime
-        
         MGSA_STICKMAN_COLOR_IDX = MGSA_STICKMAN_COLOR_IDX + 1
         if MGSA_STICKMAN_COLOR_IDX > #MGSA_STICKMAN_COLORS then
             MGSA_STICKMAN_COLOR_IDX = 1
         end
-        
         MGSA_STICKMAN_COLOR = MGSA_STICKMAN_COLORS[MGSA_STICKMAN_COLOR_IDX]
     end
 end
@@ -417,7 +414,7 @@ local function MGSA_RENDER_ONE(id)
                 local sw, sh = getScreenResolution()
                 if isCharOnScreen(ped) then
                     local distance = getDistanceBetweenCoords3d(
-                        MGSA_PLAYER_POS[1], MGSA_PLAYER_POS[2], MGSA_PLAYER_POS[3],
+                        MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, MGSA_PLAYER_POS.z,
                         x, y, z
                     )
 
@@ -562,7 +559,7 @@ local function MGSA_RENDER_VEHICLES()
         if doesVehicleExist(vhandle) then
             local x,y,z = getCarCoordinates(vhandle)
             local distance = getDistanceBetweenCoords3d(
-                MGSA_PLAYER_POS[1], MGSA_PLAYER_POS[2], MGSA_PLAYER_POS[3],
+                MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, MGSA_PLAYER_POS.z,
                 x, y, z
             )
             local sx, sy = convert3DCoordsToScreen(x,y,z)
@@ -671,8 +668,6 @@ end
 
 function __MGSAWallhack__.render()
     if not MGSA_WALLHACK or MGSA_FONTS_FAILED then return end
-
-    MGSA_PLAYER_POS[1], MGSA_PLAYER_POS[2], MGSA_PLAYER_POS[3] = getCharCoordinates(PLAYER_PED)
 
     MGSA_PLAYER_VEH_MAP = {}
 

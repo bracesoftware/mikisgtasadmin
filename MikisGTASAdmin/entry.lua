@@ -68,7 +68,9 @@ COLOR_BEAUTIFUL_BLUE = "{d4fffe}"
 -----------KOMANDE_----------------
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
-MGSA_PLAYER_POS = {}
+MGSA_PLAYER_POS = {
+    x=0,y=0,z=0
+}
 --KOMANDE
 SET_SKIN = "setskin"
 TOGGLE_RECORD_OBS = "obs"
@@ -142,6 +144,7 @@ MGSA_ALT_CHAT = true
 MGSA_BIKE_TWEAKS = true
 MGSA_WALLHACK = true
 MGSA_OBS = true
+MGSA_MINIMAP = true
 
 --*************************************************************
 MGSA_AFK_SECONDS = 10
@@ -231,19 +234,20 @@ end
 --*************************************************************
 --*************************************************************
 
-MGSARender = MGSA_STATIC_INCLUDE("static/render.lua")
+MGSARender = MGSA_STATIC_INCLUDE("modules/render.lua")
 MGSA_STICKMAN_COLOR = TIRKIZNA
-MGSAAltChat = MGSA_STATIC_INCLUDE("static/alt.lua")
+MGSAAltChat = MGSA_STATIC_INCLUDE("modules/alt.lua")
 MGSACommandInput = MGSA_STATIC_INCLUDE("cmdin.lua")
-MGSADialog = MGSA_STATIC_INCLUDE("static/dialog.lua")
-MGSAAutoBikeSprint = MGSA_STATIC_INCLUDE("static/bikesprint.lua")
-MGSASprinthookHandle = MGSA_STATIC_INCLUDE("static/sprinthook.lua")
-MGSASkin = MGSA_STATIC_INCLUDE("static/skin.lua")
-MGSAWallhack = MGSA_STATIC_INCLUDE("static/wh.lua")
-MGSASpecHack = MGSA_STATIC_INCLUDE("static/spec.lua")
+MGSADialog = MGSA_STATIC_INCLUDE("modules/dialog.lua")
+MGSAAutoBikeSprint = MGSA_STATIC_INCLUDE("modules/bikesprint.lua")
+MGSASprinthookHandle = MGSA_STATIC_INCLUDE("modules/sprinthook.lua")
+MGSASkin = MGSA_STATIC_INCLUDE("modules/skin.lua")
+MGSAWallhack = MGSA_STATIC_INCLUDE("modules/wh.lua")
+MGSASpecHack = MGSA_STATIC_INCLUDE("modules/spec.lua")
 
 MGSA_STATIC_INCLUDE("dynamic/obscfg.lua")
-MGSAObsConnect = MGSA_STATIC_INCLUDE("dynamic/obsconnect.lua")
+MGSAObsConnect = MGSA_STATIC_INCLUDE("modules/obsconnect.lua")
+MGSAMinimap = MGSA_STATIC_INCLUDE("modules/minimap.lua")
 
 -------------------------------------------------------
 ---  MGSA ---------------------------------------------
@@ -372,6 +376,8 @@ function MGSA_STATUS()
     INFO = MODUL(INFO, "Alt Chat") if MGSA_ALT_CHAT then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------OBS
     INFO = MODUL(INFO, "SAMP-OBS") if MGSA_OBS then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
+    --------------------------------OBS
+    INFO = MODUL(INFO, "Minimap") if MGSA_MINIMAP then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------
     INFO = INFO..'\n\n'..COLOR_SKYBLUE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
     ..'\n'.."Pod 'varijabilne' misli se na module koji se mogu gasiti-paliti po potrebi!"
@@ -429,6 +435,10 @@ end
 ---  MGSA ---------------------------------------------
 --- ---------------------------------------------------
 MGSA_LOADED = false
+
+function MGSA_UPDATE()
+    MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, MGSA_PLAYER_POS.z = getCharCoordinates(PLAYER_PED)
+end
 
 function MGSA_ENTRY()
     MGSA_DUMP_STACK("ENTRY POZIV")
@@ -552,6 +562,15 @@ function MGSA_ENTRY()
             desc = "Ukljucite/iskljucite SAMP-OBS modul."
         }
     )
+    MGSA_REGISTER_COMMAND(
+        {
+            name = "minimap",
+            func = MGSAMinimap.toggle,
+            warn = false,
+            args = false,
+            desc = "Ukljucite/iskljucite minimap modul."
+        }
+    )
     -------------------------
 
     MGSA_SAFE(function()
@@ -564,6 +583,7 @@ function MGSA_ENTRY()
         MGSASprinthookHandle.load()
         MGSASpecHack.load()
         MGSACommandInput.load()
+        MGSAMinimap.load()
     end)
 
     sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..tostring(#MGSA_LOADED_MODULES).." modula i "..tostring(#MGSA_COMMANDS).." komandi!")
@@ -597,6 +617,7 @@ function MGSA_ENTRY()
     )
 
     while true do
+        MGSA_UPDATE()
         wait(0)
         MGSAWallhack.render()
         MGSASprinthookHandle.loop()
@@ -608,6 +629,7 @@ function MGSA_ENTRY()
         MGSAAutoBikeSprint.bikeJump()
         MGSACommandInput.loop()
         MGSACommandInput.render()
+        MGSAMinimap.loop()
         --
         MGSA_API.__LOOP_SAMP_CHAT()
         MGSA_CHRONO.__PROC()

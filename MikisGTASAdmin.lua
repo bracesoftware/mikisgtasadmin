@@ -60,7 +60,7 @@ if (
 end
 
 local MGSA_GITHUB = {
-    BASE_URL = "https://raw.githubusercontent.com/bracesoftware/mikisgtasadmin/main/",
+    BASE_URL = "https://bracesoftware.github.io/mikisgtasadmin/",
     VERSION = "version.lua",
     MANIFEST = "manifest.lua",
     UPDATE = "update.lua"

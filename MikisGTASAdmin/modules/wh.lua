@@ -360,8 +360,8 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     MGSA_DRAWLINE_POINTS(TOP_RIGHT, BOTTOM_RIGHT, 1.0, col)
 
     MGSARender.drawCircle(
-        headinfo.firstpos.x, headinfo.firstpos.y,
-        headinfo.distance * 4, MGSA_STICKMAN_COLOR, 32
+        headinfo.firstpos.x, headinfo.firstpos.y + headinfo.distance * 2,
+        headinfo.distance * 5, MGSA_STICKMAN_COLOR, 32
     )
 end
 

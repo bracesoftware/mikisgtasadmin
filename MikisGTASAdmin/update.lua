@@ -1,5 +1,14 @@
 function MGSA_SAMPMSG(text)
-    
+    local chatRX = MGSA_CChat.RefChat
+    local chatDL = chatRX[0]
+    print("MGSA_SAMPMSG: "..text)
+    text = "[Miki's GTASAdmin]: "..text
+    pcall(function (t)
+        chatRX:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
+    end, text)
+    pcall(function (t)
+        chatDL:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
+    end, text)
 end
 
 function MGSA_Update(githubinf,roooooot,downfunc)
@@ -8,6 +17,7 @@ function MGSA_Update(githubinf,roooooot,downfunc)
     local result
 
     print("[MGSA] PROVJERAVAM AZURIRANJA...")
+    MGSA_SAMPMSG("Provjeravam azuriranja...")
 
     local VERSION_NOW = 0
     ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
@@ -19,13 +29,14 @@ function MGSA_Update(githubinf,roooooot,downfunc)
 
     local VERSION_ON_SERVER = 0
     print("SKIDAM INFORMACIJE O NAJNOVIJOJ VERZIJI")
+    MGSA_SAMPMSG("Skidam informacije o novom azuriranju!")
     local ver = downfunc(
         githubinf.BASE_URL.."MikisGTASAdmin/".. githubinf.VERSION,
         roooooot .. githubinf.VERSION
     )
 
     if not ver then
-        print("Nije moguce preuzeti informacije o verziji!")
+        MGSA_SAMPMSG("Nije moguce preuzeti informacije o verziji!")
         return false
     end
 
@@ -35,28 +46,28 @@ function MGSA_Update(githubinf,roooooot,downfunc)
     else VERSION_ON_SERVER = result end
 
     if VERSION_ON_SERVER == VERSION_NOW then
-        print("Nema novih azuriranja!")
+        MGSA_SAMPMSG("Nema novih azuriranja!")
         return true
     end
 
-    print("[MGSA] NOVI UPDATE: " .. VERSION_ON_SERVER)
-    print("[MGSA] SKIDAM UPDATE...")
+    MGSA_SAMPMSG("Novi update: " .. VERSION_ON_SERVER)
+    MGSA_SAMPMSG("Pokrecem azuriranje...")
 
-    print("SKIDAM MANIFEST")
+    MGSA_SAMPMSG("Skidanje manifesta...")
     local manifest = downfunc(
         githubinf.BASE_URL.."MikisGTASAdmin/"..githubinf.MANIFEST,
         roooooot .. githubinf.MANIFEST
     )
 
     if not manifest then
-        print("Nije moguce preuzeti manifest!")
+        MGSA_SAMPMSG("Nije moguce preuzeti manifest!")
         return false
     end
 
     ok, result = pcall(dofile, roooooot .. githubinf.MANIFEST)
 
     if not ok or type(result) ~= "table" then
-        print("[MGSA] INVALIDAN MANIFEST!")
+        MGSA_SAMPMSG("Nije moguce preuzeti azuriranje: manifest ne postoji!")
         return false
     end
 
@@ -84,7 +95,7 @@ function MGSA_Update(githubinf,roooooot,downfunc)
 
         local tt = d .. ".tmp"
 
-        print("[MGSA] SKIDANJE: " .. rrr)
+        MGSA_SAMPMSG("Skidanje: " .. rrr)
 
 
         if not downfunc(
@@ -93,14 +104,14 @@ function MGSA_Update(githubinf,roooooot,downfunc)
         ) then
             os.remove(tt)
 
-            print("[MGSA] DOWNLOAD ERROR: " .. rrr)
+            MGSA_SAMPMSG("Greska: " .. rrr)
             return false
         end
 
         local check = io.open(tt, "rb")
 
         if not check then
-            print("[MGSA] FAJL NIJE PRONADJEN: " .. tt)
+            MGSA_SAMPMSG("Fajl nije pronadjen: " .. tt)
             return false
         end
 
@@ -110,7 +121,7 @@ function MGSA_Update(githubinf,roooooot,downfunc)
         if not size or size == 0 then
             os.remove(tt)
 
-            print("[MGSA] PRAZAN FAJL: " .. rrr)
+            MGSA_SAMPMSG("Prazan fajl: " .. rrr)
             return false
         end
 
@@ -121,15 +132,15 @@ function MGSA_Update(githubinf,roooooot,downfunc)
             print("[MGSA] RENAME ERROR: " .. tostring(ee))
             print("[MGSA] TEMP: " .. tt)
             print("[MGSA] DEST: " .. d)
-
+            MGSA_SAMPMSG("Greska: "..tostring(ee)..'->'..tt..'->'..d)
             return false
         end
 
-        print("[MGSA] INSTALIRAN: " .. rrr)
+        MGSA_SAMPMSG("Instalirano: " .. rrr)
     end
 
 
-    print("[MGSA] UPDATE ZAVRSEN!")
+    MGSA_SAMPMSG("Update uspjesno zavrsen!")
 
     return true
 end

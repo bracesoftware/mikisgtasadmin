@@ -65,7 +65,7 @@ function MGSA_Update(githubinf,roooooot,downfunc)
     local VERSION_NOW = 0
     ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
     if not ok or type(result) ~= "string" then
-        VERSION_NOW = -1
+        VERSION_NOW = "-"
     else VERSION_NOW = result end
 
     print("Trenutna verzija: v"..VERSION_NOW)
@@ -85,7 +85,7 @@ function MGSA_Update(githubinf,roooooot,downfunc)
 
     ok, result = pcall(dofile, roooooot .. githubinf.VERSION)
     if not ok or type(result) ~= "string" then
-        VERSION_ON_SERVER = -1
+        VERSION_ON_SERVER = "-"
     else VERSION_ON_SERVER = result end
 
     if VERSION_ON_SERVER == VERSION_NOW then

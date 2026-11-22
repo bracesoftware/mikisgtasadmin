@@ -19,5 +19,5 @@ return {
     "MikisGTASAdmin/modules/minimap.lua",
 
     -------RESOURCES
-    "MikisGTASAdmin.Resources/map.png"
+    "MikisGTASAdmin/resources/map.png"
 }

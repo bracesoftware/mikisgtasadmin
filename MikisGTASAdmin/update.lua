@@ -1,3 +1,7 @@
+function MGSA_SAMPMSG(text)
+    
+end
+
 function MGSA_Update(githubinf,roooooot,downfunc)
     createDirectory(roooooot)
     local ok

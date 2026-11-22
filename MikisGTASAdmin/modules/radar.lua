@@ -117,17 +117,9 @@ local function drawRadar()
     renderDrawBox(rx + rw * 0.5, ry, 1, rh, 0x26FFFFFF)
     renderDrawBox(rx, ry + rh * 0.5, rw, 1, 0x26FFFFFF)
 
-    MGSARender.drawCircle(
-        cx, cy, 10, 0x26FFFFFF, 64
-    )
-
-    MGSARender.drawCircle(
-        cx, cy, 30, 0x26FFFFFF, 64
-    )
-
-    MGSARender.drawCircle(
-        cx, cy, 50, 0x26FFFFFF, 64
-    )
+    for i = 1, 8 do
+        MGSARender.drawCircle(cx,cy, i * 10, 0x26FFFFFF,64)
+    end
 
     local half = radar.dotSize * 0.5
     local ok, nick, ped

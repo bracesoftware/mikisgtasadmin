@@ -65,23 +65,7 @@ MGSA_FONT_SMALL = renderCreateFont("Arial", 8, 5)
 
 MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SMALL)
 
-local __MGSARender__ = {
-    ICONS = {
-        HOUSE = {
-            color = 0xff177551,
-            bitmap = {
-                tonumber("00011000", 2),
-                tonumber("00111100", 2),
-                tonumber("01111110", 2),
-                tonumber("11111111", 2),
-                tonumber("10011001", 2),
-                tonumber("10011001", 2),
-                tonumber("10011111", 2),
-                tonumber("11111111", 2)
-            }
-        }
-    }
-}
+local __MGSARender__ = {}
 
 function __MGSARender__.drawBitmap(bitmap, x, y, color, boxSize)
     boxSize = boxSize or 1

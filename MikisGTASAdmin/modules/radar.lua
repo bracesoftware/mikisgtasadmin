@@ -109,6 +109,18 @@ local function canFitIntoRadar(sx,sy,rx,ry,rw,rh)
     return sx >= rx and sx <= (rx + rw) and sy >= ry and sy <= (ry + rh)
 end
 
+MGSA_PICKUP_DATA = {
+    MODEL_BITMAPS = MGSA_API.sampGetPickupModelBitmaps(),
+    POOL = nil,
+    TIMER = nil
+}
+
+MGSA_PICKUP_DATA.TIMER = MGSA_CHRONO.task(
+    0.1, function (id)
+        MGSA_PICKUP_DATA.POOL = MGSA_API.sampGetPickupPool()
+    end, true
+)
+
 local function drawRadar()
     local rx, ry, rw, rh = getRadarRect()
     local cx = rx + rw * 0.5
@@ -125,15 +137,15 @@ local function drawRadar()
         MGSARender.drawCircle(cx,cy, i * 21, 0x26FFFFFF,64)
     end
 
-    local pickups = MGSA_API.sampGetPickupPool()
-    if pickups ~= nil then
-        for i, p in ipairs(pickups) do
-            if p.model == 1272 or p.model == 1273 then
+    if MGSA_PICKUP_DATA.POOL ~= nil then
+        for i, p in ipairs(MGSA_PICKUP_DATA.POOL) do
+            if MGSA_PICKUP_DATA.MODEL_BITMAPS[p.model] then
+                local pm = MGSA_PICKUP_DATA.MODEL_BITMAPS[p.model]
                 local sx, sy = worldToRadarRelative(p.x, p.y, MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, cx, cy, radiusPx)
                 if canFitIntoRadar(sx,sy,rx,ry,rw,rh) then
                     MGSARender.drawBitmapCentered(
-                        MGSARender.ICONS.HOUSE.bitmap, sx, sy,
-                        MGSARender.ICONS.HOUSE.color, 2
+                        pm.bitmap, sx, sy,
+                        pm.color, 2
                     )
                 end
             end

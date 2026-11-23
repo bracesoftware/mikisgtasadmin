@@ -826,7 +826,7 @@ function __MGSAAPI__.sampGetPickupModelBitmaps()
                 "11011011",
                 "11011011",
                 "01111110",
-                "11011011"
+                "01011010"
             )
         },
 

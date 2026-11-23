@@ -744,31 +744,47 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
         end
     end
 end
+---------------------------------------------------------
+local MGSA_PLAYERS_INFO = {
+    POOL = {}
+}
+
+local MGSA_PLAYER_POOL_MAX_ID = 1003
+local MGSA_PLAYER_POOL_BATCH_SIZE = 20
+local MGSA_PLAYER_POOL_CURSOR = 0
 
 function __MGSAAPI__.sampGetPlayerPool()
-    if not __MGSAAPI__.isSampAvailable() then return nil end
-    local result = {}
-    for i = 0, 1004 do
-        local id = i
-        local nickname = __MGSAAPI__.sampGetPlayerNickname(id)
-        local ping = __MGSAAPI__.sampGetPlayerPing(id)
-        local score = __MGSAAPI__.sampGetPlayerScore(id)
-        local armor = __MGSAAPI__.sampGetPlayerArmor(id)
-        local health = __MGSAAPI__.sampGetPlayerHealth(id)
-        local pedres, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
-        if not pedres then
-            ped = nil
-        end
-        local skin = __MGSAAPI__.sampGetPlayerSkinModel(id)
-        local colres, col = __MGSAAPI__.sampGetPlayerColor(id)
-        if not colres then
-            col = 0xffffff
-        end
-        local weapid, weapname = __MGSAAPI__.sampGetPlayerWeaponInfo(id)
-        local afk = __MGSAAPI__.sampIsPlayerPossiblyAway(id)
+    return MGSA_PLAYERS_INFO.POOL
+end
 
+local function updatePlayerPoolBatch()
+    if not __MGSAAPI__.isSampAvailable() then return end
+    local pool = MGSA_PLAYERS_INFO.POOL
+    for _ = 1, MGSA_PLAYER_POOL_BATCH_SIZE do
+        local id = MGSA_PLAYER_POOL_CURSOR
+        MGSA_PLAYER_POOL_CURSOR = MGSA_PLAYER_POOL_CURSOR + 1
+        if MGSA_PLAYER_POOL_CURSOR > MGSA_PLAYER_POOL_MAX_ID then
+            MGSA_PLAYER_POOL_CURSOR = 0
+        end
         if __MGSAAPI__.sampIsPlayerConnected(id) then
-            result[id] = {
+            local nickname = __MGSAAPI__.sampGetPlayerNickname(id)
+            local ping = __MGSAAPI__.sampGetPlayerPing(id)
+            local score = __MGSAAPI__.sampGetPlayerScore(id)
+            local armor = __MGSAAPI__.sampGetPlayerArmor(id)
+            local health = __MGSAAPI__.sampGetPlayerHealth(id)
+            local pedres, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+            if not pedres then
+                ped = nil
+            end
+            local skin = __MGSAAPI__.sampGetPlayerSkinModel(id)
+            local colres, col = __MGSAAPI__.sampGetPlayerColor(id)
+            if not colres then
+                col = 0xffffff
+            end
+            local weapid, weapname = __MGSAAPI__.sampGetPlayerWeaponInfo(id)
+            local afk = __MGSAAPI__.sampIsPlayerPossiblyAway(id)
+            pool[id] = {
+                id = id,
                 nickname = nickname,
                 ping = ping,
                 score = score,
@@ -781,19 +797,16 @@ function __MGSAAPI__.sampGetPlayerPool()
                 weapname = weapname,
                 afk = afk
             }
+        else
+            pool[id] = nil
         end
     end
-    return result
 end
 
-local MGSA_PLAYERS_INFO = {
-    POOL = nil
-}
-
 MGSA_CHRONO.task(
-    0.3, function (id)
-        MGSA_PLAYERS_INFO.POOL = __MGSAAPI__.sampGetPlayerPool()
-    end, true
+    0.05,
+    updatePlayerPoolBatch,
+    true
 )
 
 function __MGSAAPI__.sampGetPlayerPingFromPool(id)

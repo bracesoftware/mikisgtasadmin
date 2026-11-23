@@ -767,20 +767,20 @@ local function MGSA_GET_LARGESTID()
     if not __MGSAAPI__.isSampAvailable() then
         return 10
     end
-
-    local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
-
-    if not MGSA_IsValidPointer(netGame) then
-        return 10
+    for id = 1003, MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID + 1, -1 do
+        if __MGSAAPI__.sampIsPlayerConnected(id) then
+            MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID = id
+            return id
+        end
     end
-
-    local playerPool = netGame:GetPlayerPool()
-
-    if not MGSA_IsValidPointer(playerPool) then
-        return 10
+    for id = MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID, 0, -1 do
+        if __MGSAAPI__.sampIsPlayerConnected(id) then
+            MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID = id
+            return id
+        end
     end
-
-    return 1000
+    MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID = 10
+    return 10
 end
 
 function __MGSAAPI__.sampGetLargestPlayerId()

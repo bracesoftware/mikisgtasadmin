@@ -47,9 +47,9 @@ end
 function MGSA_SAMPMSG(text)
     local chat = __2(MGSA_CChat.RefChat)
     print("MGSA_SAMPMSG: "..text)
-    text = "{fcba03}[Miki's GTASAdmin]: {a6a297}"..text
+    text = "{1d8fa1}[Miki's GTASAdmin]: {97d4de}"..text
     pcall(function (t)
-        chat:AddEntry(8, t, "", 0xff7c8571,0xff9cb57b)
+        chat:AddEntry(8, t, "", 0xffffffff,0xffffffff)
     end, text)
 
 end

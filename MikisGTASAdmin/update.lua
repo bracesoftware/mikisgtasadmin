@@ -49,7 +49,7 @@ function MGSA_SAMPMSG(text)
     print("MGSA_SAMPMSG: "..text)
     text = "[Miki's GTASAdmin]: "..text
     pcall(function (t)
-        chat:AddEntry(8, t, "", 0xFFFFFFFF,0xFFFFFFFF)
+        chat:AddEntry(8, t, "", 0xff7c8571,0xff9cb57b)
     end, text)
 
 end

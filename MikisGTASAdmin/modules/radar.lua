@@ -105,6 +105,10 @@ function __MGSAMiniRadar__.load()
     })
 end
 
+local function canFitIntoRadar(sx,sy,rx,ry,rw,rh)
+    return sx >= rx and sx <= (rx + rw) and sy >= ry and sy <= (ry + rh)
+end
+
 local function drawRadar()
     local rx, ry, rw, rh = getRadarRect()
     local cx = rx + rw * 0.5
@@ -121,6 +125,21 @@ local function drawRadar()
         MGSARender.drawCircle(cx,cy, i * 21, 0x26FFFFFF,64)
     end
 
+    local pickups = MGSA_API.sampGetPickupPool()
+    if pickups ~= nil then
+        for i, p in ipairs(pickups) do
+            if p.model == 1272 or p.model == 1273 then
+                local sx, sy = worldToRadarRelative(p.x, p.y, MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, cx, cy, radiusPx)
+                if canFitIntoRadar(sx,sy,rx,ry,rw,rh) then
+                    MGSARender.drawBitmapCentered(
+                        MGSARender.ICONS.HOUSE.bitmap, sx, sy,
+                        MGSARender.ICONS.HOUSE.color, 2
+                    )
+                end
+            end
+        end
+    end
+
     local half = radar.dotSize * 0.5
     local ok, nick, ped
     for id = 0, 1004 do
@@ -133,7 +152,7 @@ local function drawRadar()
 
             if px and py then
                 local sx, sy = worldToRadarRelative(px, py, MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, cx, cy, radiusPx)
-                if sx >= rx and sx <= (rx + rw) and sy >= ry and sy <= (ry + rh) then
+                if canFitIntoRadar(sx,sy,rx,ry,rw,rh) then
                     ok, nick = MGSA_API.sampGetPlayerColor(id)
                     if not ok then
                         nick = 0xffffffff

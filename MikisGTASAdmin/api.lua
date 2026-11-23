@@ -629,6 +629,35 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     end
 end
 
+function __MGSAAPI__.sampGetPickupPool()
+    local net = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+    if not MGSA_IsValidPointer(net) then return {} end
+    local pool = net:GetPickupPool()
+    if pool == nil then return {} end
+    local result = {}
+    for i = 0, 4095 do
+        local pickup = pool.m_object[i]
+        local model = pickup.m_nModel
+        local pickupType = pickup.m_nType
+        local pos = pickup.m_position
+        local id = pool.m_nId[i]
+
+        if id ~= -1 then
+            result[#result + 1] = {
+                id = id,
+                model = model,
+                type = pickupType,
+
+                x = pos.x,
+                y = pos.y,
+                z = pos.z
+            }
+        end
+    end
+
+    return result
+end
+
 ----------------------------TESTZ--------------------------------
 
 

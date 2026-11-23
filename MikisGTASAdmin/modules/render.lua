@@ -65,7 +65,58 @@ MGSA_FONT_SMALL = renderCreateFont("Arial", 8, 5)
 
 MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SMALL)
 
-local __MGSARender__ = {}
+local __MGSARender__ = {
+    ICONS = {
+        HOUSE = {
+            color = 0xff177551,
+            bitmap = {
+                tonumber("00011000", 2),
+                tonumber("00111100", 2),
+                tonumber("01111110", 2),
+                tonumber("11111111", 2),
+                tonumber("10011001", 2),
+                tonumber("10011001", 2),
+                tonumber("10011111", 2),
+                tonumber("11111111", 2)
+            }
+        }
+    }
+}
+
+function __MGSARender__.drawBitmap(bitmap, x, y, color, boxSize)
+    boxSize = boxSize or 1
+
+    for row = 1, #bitmap do
+        local bits = bitmap[row]
+        local col = 0
+
+        while col < 8 do
+            if MGSA_BIT.band(bits, MGSA_BIT.lshift(1, 7 - col)) == 0 then
+                col = col + 1
+            else
+                local start = col
+
+                repeat
+                    col = col + 1
+                until col >= 8 or MGSA_BIT.band(bits, MGSA_BIT.lshift(1, 7 - col)) == 0
+
+                renderDrawBox(
+                    x + start * boxSize,
+                    y + (row - 1) * boxSize,
+                    (col - start) * boxSize,
+                    boxSize,
+                    color
+                )
+            end
+        end
+    end
+end
+
+function __MGSARender__.drawBitmapCentered(bm, x,y,col,size)
+    x = x - 4 * size
+    y = y - (#bm / 2) * size
+    __MGSARender__.drawBitmap(bm,x,y,col,size)
+end
 
 function __MGSARender__.drawCircleWithThickness(x, y, radius, color, segments, thickness)
     segments = segments or 48

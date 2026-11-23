@@ -748,7 +748,7 @@ end
 local MGSA_PLAYERS_INFO = {
     POOL = {},
     ONLINE_PLAYERS = {},
-    LARGEST_PLAYER_ID = 1
+    LARGEST_PLAYER_ID = 10
 }
 
 local MGSA_PLAYER_POOL_MAX_ID = 1003
@@ -780,7 +780,7 @@ local function MGSA_GET_LARGESTID()
         return 10
     end
 
-    return tonumber(playerPool.m_nLargestId) or 1
+    return 1000
 end
 
 function __MGSAAPI__.sampGetLargestPlayerId()

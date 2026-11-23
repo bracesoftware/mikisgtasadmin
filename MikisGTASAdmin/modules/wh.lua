@@ -385,7 +385,7 @@ local function MGSA_RENDER_ONE(id)
                                 color = ZUTA
                             },
                             {
-                                text = "(-1) Pjeske",--string.format("(%d) %s"..MGSA_TAB, vehid, vehname),
+                                text = "(-1) Pjeske"..MGSA_TAB,--string.format("(%d) %s"..MGSA_TAB, vehid, vehname),
                                 color = LIGHT_GRAY
                             },
                             {

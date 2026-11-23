@@ -487,8 +487,6 @@ function __MGSAAPI__.sampGetPlayerNicknameComplex(playerId)
     return true, nickname
 end
 
-
-
 function __MGSAAPI__.sampGetPlayerNickname(pid)
     local ok, res = __MGSAAPI__.sampGetPlayerNicknameComplex(pid)
     if ok then return res end
@@ -667,6 +665,56 @@ function __MGSAAPI__.sampGetPlayerWeaponInfo(id)
 
     return weapon or -1, weapons[weapon] or "Nepoznato (" .. weapon .. ")"
 end
+
+------------------------------------------------------------------
+
+local MGSA_AFK_PLAYER_LIST = {}
+local MGSA_AFK_SECONDS = 10
+local MGSA_AFK_RADIUS = 0.45
+
+function __MGSAAPI__.sampIsPlayerPossiblyAway(id)
+    if not __MGSAAPI__.sampIsPlayerConnected(id) then
+        MGSA_AFK_PLAYER_LIST[id] = nil
+        return false
+    end
+
+    local result, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+
+    if not result or not doesCharExist(ped) then
+        return false
+    end
+
+    local x, y, z = getCharCoordinates(ped)
+    local now = os.clock()
+
+    if not MGSA_AFK_PLAYER_LIST[id] then
+        MGSA_AFK_PLAYER_LIST[id] = {
+            x = x,
+            y = y,
+            z = z,
+            lastMovement = now
+        }
+
+        return false
+    end
+
+    local data = MGSA_AFK_PLAYER_LIST[id]
+
+    local distance = getDistanceBetweenCoords3d(
+        x, y, z,
+        data.x, data.y, data.z
+    )
+
+    if distance > MGSA_AFK_RADIUS then
+        data.x = x
+        data.y = y
+        data.z = z
+        data.lastMovement = now
+    end
+
+    return (now - data.lastMovement) >= MGSA_AFK_SECONDS
+end
+
 --------------------------------------------------------
 MGSA_CHRONO.task(
     3.0, function(id)
@@ -717,6 +765,7 @@ function __MGSAAPI__.sampGetPlayerPool()
             col = 0xffffff
         end
         local weapid, weapname = __MGSAAPI__.sampGetPlayerWeaponInfo(id)
+        local afk = __MGSAAPI__.sampIsPlayerPossiblyAway(id)
 
         if __MGSAAPI__.sampIsPlayerConnected(id) then
             result[id] = {
@@ -729,14 +778,15 @@ function __MGSAAPI__.sampGetPlayerPool()
                 skin = skin,
                 color = col,
                 weapid = weapid,
-                weapname = weapname
+                weapname = weapname,
+                afk = afk
             }
         end
     end
     return result
 end
 
-MGSA_PLAYERS_INFO = {
+local MGSA_PLAYERS_INFO = {
     POOL = nil
 }
 
@@ -802,7 +852,14 @@ function __MGSAAPI__.sampGetPlayerWeaponInfoFromPool(id)
     end
     return -1,"Nepoznato"
 end
-
+function __MGSAAPI__.sampIsPlayerPossiblyAwayFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.afk
+    end
+    return true
+end
+-------------------------------------------------------
 function __MGSAAPI__.sampGetPickupPool()
     local net = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
     if not MGSA_IsValidPointer(net) then return {} end

@@ -22,51 +22,6 @@ function __MGSAWallhack__.update()
     end
 end
 
-
-local MGSA_AFK_PLAYER_LIST = {}
-
-local function MGSA_IS_PLAYER_AFK(id)
-    if not MGSA_API.sampIsPlayerConnected(id) then
-        MGSA_AFK_PLAYER_LIST[id] = nil
-        return false
-    end
-
-    local result, ped = MGSA_API.sampGetCharHandleBySampPlayerId(id)
-
-    if not result or not doesCharExist(ped) then
-        return false
-    end
-
-    local x, y, z = getCharCoordinates(ped)
-    local now = os.clock()
-
-    if not MGSA_AFK_PLAYER_LIST[id] then
-        MGSA_AFK_PLAYER_LIST[id] = {
-            x = x,
-            y = y,
-            z = z,
-            lastMovement = now
-        }
-
-        return false
-    end
-
-    local data = MGSA_AFK_PLAYER_LIST[id]
-
-    local distance = getDistanceBetweenCoords3d(
-        x, y, z,
-        data.x, data.y, data.z
-    )
-
-    if distance > 0.15 then
-        data.x = x
-        data.y = y
-        data.z = z
-        data.lastMovement = now
-    end
-
-    return (now - data.lastMovement) >= MGSA_AFK_SECONDS
-end
 --------------------------
 
 local function MGSA_GET_WEAPON_AMMO(id)
@@ -377,6 +332,7 @@ local function MGSA_RENDER_ONE(id)
                     --local ammo = MGSA_GET_WEAPON_AMMO(id)
                     local skin = MGSA_API.sampGetPlayerSkinModelFromPool(id)
                     local col = MGSA_API.sampGetPlayerColorFromPool(id)
+                    local afk = MGSA_API.sampIsPlayerPossiblyAwayFromPool(id)
                     --------------------------------------
                     local font = MGSA_FONT
                     local linesize = 15
@@ -415,21 +371,21 @@ local function MGSA_RENDER_ONE(id)
                     MGSARender.renderHealthBar(font, hp, sx, sy + linesize)
                     MGSARender.renderArmorBar(font, armor, sx, sy + 2 * linesize)
                     
-                    if MGSA_IS_PLAYER_AFK(id) then
+                    if afk then
                         MGSARender.renderCenteredText(
-                            font, "Moguc AFK!", sx, sy + linesize*3, SIVA
+                            font, "Moguc AFK!", sx, sy + linesize * 3, SIVA
                         )
                     end
                     
                     MGSA_COMPLEX_LABEL_RENDER(
-                        font, sx, sy + linesize*4,
+                        font, sx, sy + linesize * 4,
                         {
                             {
                                 text = "Vozilo: ",
                                 color = ZUTA
                             },
                             {
-                                text = string.format("(%d) %s"..MGSA_TAB, vehid, vehname),
+                                text = "(-1) Pjeske",--string.format("(%d) %s"..MGSA_TAB, vehid, vehname),
                                 color = LIGHT_GRAY
                             },
                             {
@@ -444,7 +400,7 @@ local function MGSA_RENDER_ONE(id)
                     )
 
                     MGSA_COMPLEX_LABEL_RENDER(
-                        font, sx, sy + linesize*5,
+                        font, sx, sy + linesize * 5,
                         {
                             {
                                 text = "Skin: ",

@@ -629,6 +629,32 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
     end
 end
 
+function __MGSAAPI__.sampGetPlayerPool()
+    local result = {}
+    for i = 0, 1004 do
+        local id = i
+        local nickname = __MGSAAPI__.sampGetPlayerNickname(id)
+        local ping = __MGSAAPI__.sampGetPlayerPing(id)
+        local score = __MGSAAPI__.sampGetPlayerScore(id)
+        local armor = __MGSAAPI__.sampGetPlayerArmor(id)
+        local health = __MGSAAPI__.sampGetPlayerHealth(id)
+        local pedres, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+
+        if pedres and __MGSAAPI__.sampIsPlayerConnected(id) then
+            result[#result + 1] = {
+                id = id,
+                nickname = nickname,
+                ping = ping,
+                score = score,
+                armor = armor,
+                health = health,
+                ped = ped
+            }
+        end
+    end
+    return result
+end
+
 function __MGSAAPI__.sampGetPickupPool()
     local net = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
     if not MGSA_IsValidPointer(net) then return {} end
@@ -689,13 +715,13 @@ function __MGSAAPI__.sampGetPickupModelBitmaps()
         [1210] = {
             color = 0xffa87942,
             bitmap = B(
-                "00111100",
-                "00100100",
+                "01111110",
+                "01000010",
                 "11111111",
-                "10000001",
-                "10111101",
-                "10100101",
-                "10111101",
+                "11111111",
+                "11111111",
+                "11111111",
+                "11111111",
                 "11111111"
             )
         },
@@ -717,16 +743,17 @@ function __MGSAAPI__.sampGetPickupModelBitmaps()
 
         -- INFORMATION
         [1239] = {
-            color = 0xff35aaff,
+            color = 0xfff0e441,
             bitmap = B(
-                "00111100",
-                "01111110",
-                "11011011",
-                "11011011",
-                "11011011",
-                "11011011",
-                "01111110",
-                "00111100"
+                "00001100",
+                "00001100",
+                "00000000",
+                "00011000",
+                "00110000",
+                "00110000",
+                "01100000",
+                "01100000",
+                "00110000"
             )
         },
 

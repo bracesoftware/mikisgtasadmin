@@ -599,7 +599,7 @@ end
 function __MGSAAPI__.isSampDialogOnScreen()
     return MGSA_DIALOG_OPEN
 end
-
+---------------------------------------------------
 function __MGSAAPI__.sampGetPlayerSkinModel(id)
     local r, ped = MGSA_API.sampGetCharHandleBySampPlayerId(id)
     if not r then
@@ -608,7 +608,66 @@ function __MGSAAPI__.sampGetPlayerSkinModel(id)
     if not doesCharExist(ped) then return 0 end
     return getCharModel(ped)
 end
+------------------------------------------------------
+function __MGSAAPI__.sampGetPlayerWeaponInfo(id)
+    local ok, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+    if not ok then
+        return -1, "Nepoznato"
+    end
+    if not doesCharExist(ped) then
+        return -1,"Nepoznato"
+    end
 
+    local weapon = getCurrentCharWeapon(ped)
+
+    local weapons = {
+        [0] = "Sake - Nije naoruzan",
+        [1] = "Brass Knuckles",
+        [2] = "Golf Club",
+        [3] = "Pendrek",
+        [4] = "Noz",
+        [5] = "Baseball Bat",
+        [6] = "Lopata",
+        [7] = "Pool Cue",
+        [8] = "Katana",
+        [9] = "Chainsaw",
+        [10] = "Ljubicasti Dildo",
+        [11] = "Dildo",
+        [12] = "Vibrator",
+        [13] = "Sivi Vibrator",
+        [14] = "Cvijece",
+        [15] = "Cane",
+        [16] = "Granata",
+        [17] = "Tear Gas",
+        [18] = "Molotov",
+        [22] = "Pistol",
+        [23] = "Silenced Pistol",
+        [24] = "Desert Eagle",
+        [25] = "Shotgun",
+        [26] = "Sawed-off",
+        [27] = "Combat Shotgun",
+        [28] = "Micro SMG",
+        [29] = "MP5",
+        [30] = "AK-47",
+        [31] = "M4",
+        [32] = "Tec-9",
+        [33] = "Rifle",
+        [34] = "Sniper Rifle",
+        [35] = "RPG",
+        [36] = "HS Rocket",
+        [37] = "Flamethrower",
+        [38] = "Minigun",
+        [39] = "Satchel Charge",
+        [40] = "Detonator",
+        [41] = "Sprej",
+        [42] = "Fire Extinguisher",
+        [43] = "Kamera",
+        [46] = "Padobran"
+    }
+
+    return weapon or -1, weapons[weapon] or "Nepoznato (" .. weapon .. ")"
+end
+--------------------------------------------------------
 MGSA_CHRONO.task(
     3.0, function(id)
         local n = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame) if MGSA_IsValidPointer(n) then
@@ -649,14 +708,15 @@ function __MGSAAPI__.sampGetPlayerPool()
         local armor = __MGSAAPI__.sampGetPlayerArmor(id)
         local health = __MGSAAPI__.sampGetPlayerHealth(id)
         local pedres, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+        if not pedres then
+            ped = nil
+        end
         local skin = __MGSAAPI__.sampGetPlayerSkinModel(id)
         local colres, col = __MGSAAPI__.sampGetPlayerColor(id)
         if not colres then
             col = 0xffffff
         end
-        if not pedres then
-            ped = nil
-        end
+        local weapid, weapname = __MGSAAPI__.sampGetPlayerWeaponInfo(id)
 
         if __MGSAAPI__.sampIsPlayerConnected(id) then
             result[id] = {
@@ -667,7 +727,9 @@ function __MGSAAPI__.sampGetPlayerPool()
                 health = health,
                 ped = ped,
                 skin = skin,
-                color = col
+                color = col,
+                weapid = weapid,
+                weapname = weapname
             }
         end
     end
@@ -732,6 +794,13 @@ function __MGSAAPI__.sampGetPlayerColorFromPool(id)
         return player.color
     end
     return 0
+end
+function __MGSAAPI__.sampGetPlayerWeaponInfoFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.weapid, player.weapname
+    end
+    return -1,"Nepoznato"
 end
 
 function __MGSAAPI__.sampGetPickupPool()

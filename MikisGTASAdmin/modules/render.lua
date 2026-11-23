@@ -200,7 +200,7 @@ end
 -------------------------------------
 
 function __MGSARender__.renderComplexLabel(font, x, y, parts, alignment)
-    local SUS_THING = renderGetFontDrawTextLength(font, MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB)
+    local SUS_THING = renderGetFontDrawTextLength(font, MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB)
     local totalWidth = 0
 
     for _, part in ipairs(parts) do

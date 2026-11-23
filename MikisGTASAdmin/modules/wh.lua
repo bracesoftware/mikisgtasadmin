@@ -68,61 +68,6 @@ local function MGSA_IS_PLAYER_AFK(id)
     return (now - data.lastMovement) >= MGSA_AFK_SECONDS
 end
 --------------------------
----
-local function MGSA_GET_WEAPON_NAME(ped)
-    if not doesCharExist(ped) then
-        return -1,"Nepoznato"
-    end
-
-    local weapon = getCurrentCharWeapon(ped)
-
-    local weapons = {
-        [0] = "Sake - Nije naoruzan",
-        [1] = "Brass Knuckles",
-        [2] = "Golf Club",
-        [3] = "Pendrek",
-        [4] = "Noz",
-        [5] = "Baseball Bat",
-        [6] = "Lopata",
-        [7] = "Pool Cue",
-        [8] = "Katana",
-        [9] = "Chainsaw",
-        [10] = "Ljubicasti Dildo",
-        [11] = "Dildo",
-        [12] = "Vibrator",
-        [13] = "Sivi Vibrator",
-        [14] = "Cvijece",
-        [15] = "Cane",
-        [16] = "Granata",
-        [17] = "Tear Gas",
-        [18] = "Molotov",
-        [22] = "Pistol",
-        [23] = "Silenced Pistol",
-        [24] = "Desert Eagle",
-        [25] = "Shotgun",
-        [26] = "Sawed-off",
-        [27] = "Combat Shotgun",
-        [28] = "Micro SMG",
-        [29] = "MP5",
-        [30] = "AK-47",
-        [31] = "M4",
-        [32] = "Tec-9",
-        [33] = "Rifle",
-        [34] = "Sniper Rifle",
-        [35] = "RPG",
-        [36] = "HS Rocket",
-        [37] = "Flamethrower",
-        [38] = "Minigun",
-        [39] = "Satchel Charge",
-        [40] = "Detonator",
-        [41] = "Sprej",
-        [42] = "Fire Extinguisher",
-        [43] = "Kamera",
-        [46] = "Padobran"
-    }
-
-    return weapon or -1, weapons[weapon] or "Nepoznato (" .. weapon .. ")"
-end
 
 local function MGSA_GET_WEAPON_AMMO(id)
     if not MGSA_API.sampIsPlayerConnected(id) then
@@ -429,7 +374,7 @@ local function MGSA_RENDER_ONE(id)
                     local speed = MGSA_GET_SPEED(ped)
                     local vhandle, vehid, vehname = MGSA_GET_VEHICLE_INFO(ped)
                     local wid,weapon = MGSA_GET_WEAPON_NAME(ped)
-                    local ammo = MGSA_GET_WEAPON_AMMO(id)
+                    --local ammo = MGSA_GET_WEAPON_AMMO(id)
                     local skin = MGSA_API.sampGetPlayerSkinModelFromPool(id)
                     local col = MGSA_API.sampGetPlayerColorFromPool(id)
                     --------------------------------------
@@ -514,7 +459,7 @@ local function MGSA_RENDER_ONE(id)
                                 color = GOLD
                             },
                             {
-                                text = string.format("(%d) %s [%d]",wid, weapon, ammo),
+                                text = string.format("(%d) %s",wid, weapon),
                                 color = LIGHT_GRAY
                             }
                         }

@@ -765,19 +765,19 @@ end
 
 local function MGSA_GET_LARGESTID()
     if not __MGSAAPI__.isSampAvailable() then
-        return -1
+        return 10
     end
 
     local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
 
     if not MGSA_IsValidPointer(netGame) then
-        return -1
+        return 10
     end
 
     local playerPool = netGame:GetPlayerPool()
 
     if not MGSA_IsValidPointer(playerPool) then
-        return -1
+        return 10
     end
 
     return tonumber(playerPool.m_nLargestId) or 1

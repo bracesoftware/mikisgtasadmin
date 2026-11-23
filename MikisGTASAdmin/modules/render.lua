@@ -200,11 +200,15 @@ end
 -------------------------------------
 
 function __MGSARender__.renderComplexLabel(font, x, y, parts, alignment)
-    local SUS_THING = renderGetFontDrawTextLength(font, MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB .. MGSA_TAB .. MGSA_TAB..MGSA_TAB..MGSA_TAB)
+    local SUS_THING = renderGetFontDrawTextLength(font, MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB..MGSA_TAB)
     local totalWidth = 0
 
     for _, part in ipairs(parts) do
-        if part.text:match("^#[hva]bar#[%d%.]+#$") then
+        if (
+            part.abar ~= nil or
+            part.hbar ~= nil or
+            part.vbar ~= nil
+        ) then
             totalWidth = totalWidth + SUS_THING
         else
             totalWidth = totalWidth + renderGetFontDrawTextLength(font, part.text)
@@ -219,16 +223,14 @@ function __MGSARender__.renderComplexLabel(font, x, y, parts, alignment)
     end
 
     for _, part in ipairs(parts) do
-        local barType, val = part.text:match("^#([hva]bar)#([%d%.]+)#$")
-
-        if barType == "hbar" then
-            __MGSARender__.renderHealthBar(font, tonumber(val) or 0, currentX + (SUS_THING / 2), y)
+        if part.hbar ~= nil then
+            __MGSARender__.renderHealthBar(font, tonumber(part.hbar) or 0, currentX + (SUS_THING / 2), y)
             currentX = currentX + SUS_THING
-        elseif barType == "abar" then
-            __MGSARender__.renderArmorBar(font, tonumber(val) or 0, currentX + (SUS_THING / 2), y)
+        elseif part.abar ~= nil then
+            __MGSARender__.renderArmorBar(font, tonumber(part.abar) or 0, currentX + (SUS_THING / 2), y)
             currentX = currentX + SUS_THING
-        elseif barType == "vbar" then
-            __MGSARender__.renderVehicleHealthBar(font, tonumber(val) or 0, currentX + (SUS_THING / 2), y)
+        elseif part.vbar ~= nil then
+            __MGSARender__.renderVehicleHealthBar(font, tonumber(part.vbar) or 0, currentX + (SUS_THING / 2), y)
             currentX = currentX + SUS_THING
         else
             renderFontDrawText(font, part.text, currentX, y, part.color)

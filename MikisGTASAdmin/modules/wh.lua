@@ -77,7 +77,7 @@ local function MGSA_GET_WEAPON_NAME(ped)
     local weapon = getCurrentCharWeapon(ped)
 
     local weapons = {
-        [0] = "Sake",
+        [0] = "Sake - Nije naoruzan",
         [1] = "Brass Knuckles",
         [2] = "Golf Club",
         [3] = "Pendrek",
@@ -142,16 +142,6 @@ local function MGSA_GET_WEAPON_AMMO(id)
     end
 
     return getAmmoInCharWeapon(ped, weapon) or 0
-end
-
---takes samp server player id
-local function MGSA_GET_SKIN(id)
-    local r, ped = MGSA_API.sampGetCharHandleBySampPlayerId(id)
-    if not r then
-        return 0
-    end
-    if not doesCharExist(ped) then return 0 end
-    return getCharModel(ped)
 end
 
 --takes ped handle
@@ -237,13 +227,6 @@ local function MGSA_GET_VEHICLE_INFO(ped)
 end
 
 --------------------------------------------
-local function MGSA_GET_PLAYER_COLOR(id)
-    local ok, color = MGSA_API.sampGetPlayerColor(id)
-    if not ok then
-        return 0xFFFFFFFF
-    end
-    return bit.bor(0xFF000000, bit.band(color, 0x00FFFFFF))
-end
 
 local function MGSA_DRAW_INDIVIDUAL_BONE(ped, bone1, bone2, color)
     local mad = MGSA_MOONADDITIONS
@@ -439,16 +422,16 @@ local function MGSA_RENDER_ONE(id)
                         x, y, z
                     )
 
-                    local score = MGSA_API.sampGetPlayerScore(id)
-                    local ping = MGSA_API.sampGetPlayerPing(id)
-                    local nickname = MGSA_API.sampGetPlayerNickname(id)
+                    local score = MGSA_API.sampGetPlayerScoreFromPool(id)
+                    local ping = MGSA_API.sampGetPlayerPingFromPool(id)
+                    local nickname = MGSA_API.sampGetPlayerNicknameFromPool(id)
                     local hp, armor = MGSA_GET_PLAYER_HEALTH_ARMOR(id)
                     local speed = MGSA_GET_SPEED(ped)
                     local vhandle, vehid, vehname = MGSA_GET_VEHICLE_INFO(ped)
                     local wid,weapon = MGSA_GET_WEAPON_NAME(ped)
                     local ammo = MGSA_GET_WEAPON_AMMO(id)
-                    local skin = MGSA_GET_SKIN(id)
-                    local col = MGSA_GET_PLAYER_COLOR(id)
+                    local skin = MGSA_API.sampGetPlayerSkinModelFromPool(id)
+                    local col = MGSA_API.sampGetPlayerColorFromPool(id)
                     --------------------------------------
                     local font = MGSA_FONT
                     local linesize = 15
@@ -625,7 +608,7 @@ local function MGSA_RENDER_VEHICLES()
                             color = MASLINASTA
                         },
                         {
-                            text = string.format("#vbar#%d#", getCarHealth(vhandle)),
+                            vbar = getCarHealth(vhandle),
                             color = MASLINASTA
                         }
                     }
@@ -634,12 +617,12 @@ local function MGSA_RENDER_VEHICLES()
                 local lineY = sy + 15
                 for _, id in ipairs(playerids) do
                     if MGSA_API.sampIsPlayerConnected(id) then
-                        local nick = MGSA_API.sampGetPlayerNickname(id)
-                        local col = MGSA_GET_PLAYER_COLOR(id)
+                        local nick = MGSA_API.sampGetPlayerNicknameFromPool(id)
+                        local col = MGSA_API.sampGetPlayerColorFromPool(id)
                         local hp, armor = MGSA_GET_PLAYER_HEALTH_ARMOR(id)
-                        local skin = MGSA_GET_SKIN(id)
-                        local ping = MGSA_API.sampGetPlayerPing(id)
-                        local score = MGSA_API.sampGetPlayerScore(id)
+                        local skin = MGSA_API.sampGetPlayerSkinModelFromPool(id)
+                        local ping = MGSA_API.sampGetPlayerPingFromPool(id)
+                        local score = MGSA_API.sampGetPlayerScoreFromPool(id)
 
                         MGSA_COMPLEX_LABEL_RENDER(
                             MGSA_FONT_SMALL, sx, lineY,
@@ -653,11 +636,11 @@ local function MGSA_RENDER_VEHICLES()
                                     color = col
                                 },
                                 {
-                                    text = string.format("#hbar#%d#", hp),
+                                    hbar = hp,
                                     color = CRVENA
                                 },
                                 {
-                                    text = string.format("#abar#%d#", armor),
+                                    abar = armor,
                                     color = BIJELA
                                 },
                                 {

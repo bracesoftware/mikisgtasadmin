@@ -600,6 +600,15 @@ function __MGSAAPI__.isSampDialogOnScreen()
     return MGSA_DIALOG_OPEN
 end
 
+function __MGSAAPI__.sampGetPlayerSkinModel(id)
+    local r, ped = MGSA_API.sampGetCharHandleBySampPlayerId(id)
+    if not r then
+        return 0
+    end
+    if not doesCharExist(ped) then return 0 end
+    return getCharModel(ped)
+end
+
 MGSA_CHRONO.task(
     3.0, function(id)
         local n = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame) if MGSA_IsValidPointer(n) then
@@ -630,6 +639,7 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
 end
 
 function __MGSAAPI__.sampGetPlayerPool()
+    if not __MGSAAPI__.isSampAvailable() then return nil end
     local result = {}
     for i = 0, 1004 do
         local id = i
@@ -639,20 +649,89 @@ function __MGSAAPI__.sampGetPlayerPool()
         local armor = __MGSAAPI__.sampGetPlayerArmor(id)
         local health = __MGSAAPI__.sampGetPlayerHealth(id)
         local pedres, ped = __MGSAAPI__.sampGetCharHandleBySampPlayerId(id)
+        local skin = __MGSAAPI__.sampGetPlayerSkinModel(id)
+        local colres, col = __MGSAAPI__.sampGetPlayerColor(id)
+        if not colres then
+            col = 0xffffff
+        end
+        if not pedres then
+            ped = nil
+        end
 
-        if pedres and __MGSAAPI__.sampIsPlayerConnected(id) then
-            result[#result + 1] = {
-                id = id,
+        if __MGSAAPI__.sampIsPlayerConnected(id) then
+            result[id] = {
                 nickname = nickname,
                 ping = ping,
                 score = score,
                 armor = armor,
                 health = health,
-                ped = ped
+                ped = ped,
+                skin = skin,
+                color = col
             }
         end
     end
     return result
+end
+
+MGSA_PLAYERS_INFO = {
+    POOL = nil
+}
+
+MGSA_CHRONO.task(
+    0.3, function (id)
+        MGSA_PLAYERS_INFO.POOL = __MGSAAPI__.sampGetPlayerPool()
+    end, true
+)
+
+function __MGSAAPI__.sampGetPlayerPingFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.ping
+    end
+    return 0
+end
+function __MGSAAPI__.sampGetPlayerNicknameFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.nickname
+    end
+    return "-"
+end
+function __MGSAAPI__.sampGetPlayerScoreFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.score
+    end
+    return 0
+end
+function __MGSAAPI__.sampGetPlayerSkinModelFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.skin
+    end
+    return 0
+end
+function __MGSAAPI__.sampGetPlayerArmorFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.armor
+    end
+    return 0
+end
+function __MGSAAPI__.sampGetPlayerHealthFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.health
+    end
+    return 0
+end
+function __MGSAAPI__.sampGetPlayerColorFromPool(id)
+    local player = MGSA_PLAYERS_INFO.POOL[id]
+    if player then
+        return player.color
+    end
+    return 0
 end
 
 function __MGSAAPI__.sampGetPickupPool()

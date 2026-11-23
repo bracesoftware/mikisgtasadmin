@@ -746,7 +746,9 @@ function __MGSAAPI__.__LOOP_SAMP_CHAT()
 end
 ---------------------------------------------------------
 local MGSA_PLAYERS_INFO = {
-    POOL = {}
+    POOL = {},
+    ONLINE_PLAYERS = {},
+    LARGEST_PLAYER_ID = 1
 }
 
 local MGSA_PLAYER_POOL_MAX_ID = 1003
@@ -755,6 +757,34 @@ local MGSA_PLAYER_POOL_CURSOR = 0
 
 function __MGSAAPI__.sampGetPlayerPool()
     return MGSA_PLAYERS_INFO.POOL
+end
+
+function __MGSAAPI__.sampGetOnlinePlayers()
+    return MGSA_PLAYERS_INFO.ONLINE_PLAYERS
+end
+
+local function MGSA_GET_LARGESTID()
+    if not __MGSAAPI__.isSampAvailable() then
+        return -1
+    end
+
+    local netGame = MGSA_GetRefObject(MGSA_CNetGame.RefNetGame)
+
+    if not MGSA_IsValidPointer(netGame) then
+        return -1
+    end
+
+    local playerPool = netGame:GetPlayerPool()
+
+    if not MGSA_IsValidPointer(playerPool) then
+        return -1
+    end
+
+    return tonumber(playerPool.m_nLargestId) or 1
+end
+
+function __MGSAAPI__.sampGetLargestPlayerId()
+    return MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID
 end
 
 local function updatePlayerPoolBatch()
@@ -802,6 +832,14 @@ local function updatePlayerPoolBatch()
         end
     end
 end
+
+MGSA_CHRONO.task(
+    0.5,
+    function (id)
+        MGSA_PLAYERS_INFO.LARGEST_PLAYER_ID = MGSA_GET_LARGESTID()
+    end,
+    true
+)
 
 MGSA_CHRONO.task(
     0.05,

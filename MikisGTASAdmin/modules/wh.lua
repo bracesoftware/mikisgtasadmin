@@ -573,7 +573,7 @@ function __MGSAWallhack__.render()
 
     MGSA_PLAYER_VEH_MAP = {}
 
-    for id = 0, 1003 do
+    for id = 0, MGSA_API.sampGetLargestPlayerId() do
         MGSA_RENDER_ONE(id)
     end
     MGSA_RENDER_VEHICLES()

@@ -154,7 +154,7 @@ local function drawRadar()
 
     local half = radar.dotSize * 0.5
     local ok, nick, ped
-    for id = 0, 1004 do
+    for id = 0, MGSA_API.sampGetLargestPlayerId() do
         if MGSA_API.sampIsPlayerConnected(id) then
             local px, py
             ok, ped = MGSA_API.sampGetCharHandleBySampPlayerId(id)

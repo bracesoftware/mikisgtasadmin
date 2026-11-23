@@ -367,16 +367,13 @@ local function MGSA_RENDER_ONE(id)
                             }
                         }
                     )
-                    
                     MGSARender.renderHealthBar(font, hp, sx, sy + linesize)
                     MGSARender.renderArmorBar(font, armor, sx, sy + 2 * linesize)
-                    
                     if afk then
                         MGSARender.renderCenteredText(
                             font, "Moguc AFK!", sx, sy + linesize * 3, SIVA
                         )
                     end
-                    
                     MGSA_COMPLEX_LABEL_RENDER(
                         font, sx, sy + linesize * 4,
                         {

@@ -309,15 +309,7 @@ function MGSA_COMMAND_EXECUTE(name, ...)
         end
     end
 
-    if not cmd then return false end
-
-    if not cmd.func and not cmd.warn and not cmd.args and not cmd.desc then
-        sendWarningMessage("Komanda nije validno registrovana! (Ne posjeduje potrebne parametre)")
-        return
-    end
-
-    if type(cmd.func) ~= "function" then
-        sendWarningMessage("Komanda nema postavljenu validnu funkciju!")
+    if cmd == nil then
         return false
     end
 

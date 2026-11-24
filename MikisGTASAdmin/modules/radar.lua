@@ -121,11 +121,21 @@ MGSA_PICKUP_DATA.TIMER = MGSA_CHRONO.task(
     end, true
 )
 
+local OPACITY_RANGE = 35
 local ICON_OPACITY = 0
+local MODE = 0
 MGSA_CHRONO.task(0.01, function (id)
-    ICON_OPACITY = ICON_OPACITY + 1
+    if MODE == 0 then
+        ICON_OPACITY = ICON_OPACITY + 1
+    else
+        ICON_OPACITY = ICON_OPACITY - 1
+    end
     if ICON_OPACITY > 100 then
-        ICON_OPACITY = 0
+        ICON_OPACITY = 100
+        MODE = 1
+    elseif ICON_OPACITY < OPACITY_RANGE then
+        MODE = 0
+        ICON_OPACITY = OPACITY_RANGE
     end
 end, true)
 

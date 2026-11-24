@@ -67,6 +67,14 @@ MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SM
 
 local __MGSARender__ = {}
 
+function __MGSARender__.setColorOpacity(color, intensity)
+    intensity = math.max(0, math.min(100, intensity))
+    local alpha = math.floor((intensity / 100) * 255)
+    return (alpha * 0x1000000) + (color % 0x1000000)
+end
+
+---------------------------------
+
 function __MGSARender__.drawBitmap(bitmap, x, y, color, boxSize)
     boxSize = boxSize or 1
 

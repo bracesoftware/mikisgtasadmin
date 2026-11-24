@@ -121,6 +121,14 @@ MGSA_PICKUP_DATA.TIMER = MGSA_CHRONO.task(
     end, true
 )
 
+local ICON_OPACITY = 0
+MGSA_CHRONO.task(0.01, function (id)
+    ICON_OPACITY = ICON_OPACITY + 1
+    if ICON_OPACITY > 100 then
+        ICON_OPACITY = 0
+    end
+end, true)
+
 local function drawRadar()
     local rx, ry, rw, rh = getRadarRect()
     local cx = rx + rw * 0.5
@@ -145,7 +153,7 @@ local function drawRadar()
                 if canFitIntoRadar(sx,sy,rx,ry,rw,rh) then
                     MGSARender.drawBitmapCentered(
                         pm.bitmap, sx, sy,
-                        pm.color, 2
+                        MGSARender.setColorOpacity(pm.color, ICON_OPACITY), 2
                     )
                 end
             end

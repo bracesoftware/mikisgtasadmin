@@ -378,15 +378,11 @@ function MGSA_STATUS()
 end
 
 function MGSA_KOMANDE(params)
-    MGSA_TRACE("MGSA_KOMANDE ENTER: "..tostring(params))
     local args = {}
     for word in tostring(params):gmatch("%S+") do table.insert(args, word:lower()) end
 
     local command = args[1]
     local other = args[2] or ""
-
-    MGSA_TRACE("PARSED COMMAND: " .. tostring(command))
-    MGSA_TRACE("COMMAND ARGUMENT: " .. tostring(other))
 
     INFO = COLOR_PEACH .. "Dostupne komande:\n\n"
     for i, what in ipairs(MGSA_COMMANDS) do
@@ -405,22 +401,12 @@ function MGSA_KOMANDE(params)
     INFO = INFO..'\n\n'..COLOR_BEAUTIFUL_BLUE.."Trenutno instalirana verzija: "..COLOR_RED.."v"..tostring(MGSA_VERSION)
 
     if not command or command == "" then
-        MGSA_TRACE("OTVOREN HELP DIJALOG")
         safe_call(MGSADialog.show,"Informacije",INFO)
-        MGSA_TRACE("ZATVOREN HELP DIJALOG")
         return
     end
 
-    MGSA_TRACE("PRIJE IZVRSAVANJA KOMANDE: "..command)
-
     local res = MGSA_COMMAND_EXECUTE(command, other)
-
-    MGSA_TRACE("NAKON IZVRSAVANJA KOMANDE: "..command)
-
     if not res then sendErrorMessage("Nepoznata komanda, stisnite Z pa ENTER za info!") end
-
-    MGSA_TRACE("ZAVRSEN MGSA_KOMANDE")
-    return
 end
 -------------------------------------------------------
 ---  MGSA ---------------------------------------------

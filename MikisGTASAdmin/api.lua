@@ -951,6 +951,16 @@ local function B(...)
 end
 
 function __MGSAAPI__.sampGetPickupModelBitmaps()
+    local house_bitmap = B(
+        "00011010",
+        "00111110",
+        "01111110",
+        "11111111",
+        "10011001",
+        "10011001",
+        "10011111",
+        "11111111"
+    )
     return {
         --white arrow pointing downwards
         [1318] = {
@@ -1138,73 +1148,28 @@ function __MGSAAPI__.sampGetPickupModelBitmaps()
         -- BLUE HOUSE
         [1272] = {
             color = 0xff1cb5d4,
-            bitmap = B(
-                "00011000",
-                "00111100",
-                "01111110",
-                "11111111",
-                "10011001",
-                "10011001",
-                "10011111",
-                "11111111"
-            )
+            bitmap = house_bitmap
         },
 
         -- GREEN HOUSE
         [1273] = {
             color = 0xff5ce32b,
-            bitmap = B(
-                "00011000",
-                "00111100",
-                "01111110",
-                "11111111",
-                "10011001",
-                "10011001",
-                "10011111",
-                "11111111"
-            )
+            bitmap = house_bitmap
         },
         -- ORANGE HOUSE
         [19523] = {
             color = 0xffa85400,
-            bitmap = B(
-                "00011000",
-                "00111100",
-                "01111110",
-                "11111111",
-                "10011001",
-                "10011001",
-                "10011111",
-                "11111111"
-            )
+            bitmap = house_bitmap
         },
         -- RED HOUSE
         [19522] = {
             color = 0xffa80000,
-            bitmap = B(
-                "00011000",
-                "00111100",
-                "01111110",
-                "11111111",
-                "10011001",
-                "10011001",
-                "10011111",
-                "11111111"
-            )
+            bitmap = house_bitmap
         },
         -- yellow HOUSE
         [19524] = {
             color = 0xffd9c704,
-            bitmap = B(
-                "00011000",
-                "00111100",
-                "01111110",
-                "11111111",
-                "10011001",
-                "10011001",
-                "10011111",
-                "11111111"
-            )
+            bitmap = house_bitmap
         },
 
         -- DOLLAR

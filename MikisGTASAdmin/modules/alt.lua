@@ -33,7 +33,10 @@ local function send____(format)
         table.remove(MESSAGE_HISTORY, 1)
     end
 
-    table.insert(MESSAGE_HISTORY, newformat)
+    table.insert(MESSAGE_HISTORY, {
+        format = newformat,
+        x_offset = 30
+    })
 end
 
 function __MGSAAltChat__.send(format)
@@ -51,10 +54,21 @@ function __MGSAAltChat__.loop()
     local y = 600
     for i,format in ipairs(MESSAGE_HISTORY) do
         y = y + h + 3
-        MGSARender.renderComplexLabel(font, x,y,format,MGSA_RENDER_ALIGNMENT_LEFT)
+        MGSARender.renderComplexLabel(font, x + format.x_offset,y,format.format,MGSA_RENDER_ALIGNMENT_LEFT)
     end
     return
 end
+
+MGSA_CHRONO.task(
+    0.001, function (id)
+        for _, msg in ipairs(MESSAGE_HISTORY) do
+            if not (msg.x_offset <= 0) then
+                msg.x_offset = msg.x_offset - 1
+            end
+            if msg.x_offset < 0 then msg.x_offset = 0 end
+        end
+    end, true
+)
 
 function __MGSAAltChat__.toggle()
     MGSA_ALT_CHAT = not MGSA_ALT_CHAT

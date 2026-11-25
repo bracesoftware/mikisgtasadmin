@@ -68,6 +68,8 @@ MGSA_FONTS_FAILED = (not MGSA_FONT) or (not MGSA_FONT_BOLD) or (not MGSA_FONT_SM
 local __MGSARender__ = {}
 
 function __MGSARender__.setColorOpacity(color, intensity)
+    if intensity < 0 then intensity = 0 end
+    if intensity > 100 then intensity = 100 end
     intensity = math.max(0, math.min(100, intensity))
     local alpha = math.floor((intensity / 100) * 255)
     return (alpha * 0x1000000) + (color % 0x1000000)

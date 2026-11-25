@@ -5,6 +5,7 @@ local active = false
 local inputText = ""
 local maxLength = 96
 local font = nil
+local render = false
 
 local WIDTH = 500
 local HEIGHT = 145
@@ -21,6 +22,18 @@ local COLORS = {
     footer = 0xFFAAAAAA
 }
 
+local CONSOLE_INFO = {
+    timer = nil,
+    pos = {
+        x = 0,
+        y = 0
+    },
+    opacity = 0,
+    delay = 0.0000001,
+    max_y_offset = 50,
+    max_opacity = 100
+}
+
 local PLACEHOLDER = "Unesite komandu ili pritisnite Enter za pomoc!"
 
 function __MGSACommandInput__.isOpen()
@@ -32,6 +45,7 @@ function __MGSACommandInput__.open()
 
     inputText = ""
     active = true
+    render = true
 
     MGSA_API.setPlayerControllable(false)
     MGSAAltChat.send(
@@ -45,6 +59,27 @@ function __MGSACommandInput__.open()
                 color = SIVA
             }
         }
+    )
+
+    if CONSOLE_INFO.timer ~= nil then
+        MGSA_CHRONO.kill(CONSOLE_INFO.timer)
+    end
+
+    CONSOLE_INFO.opacity = 0
+    CONSOLE_INFO.pos.y = CONSOLE_INFO.max_y_offset
+
+    CONSOLE_INFO.timer = MGSA_CHRONO.task(
+        CONSOLE_INFO.delay, function (id)
+            if CONSOLE_INFO.opacity >= 100 or CONSOLE_INFO.pos.y <= 0 then
+                CONSOLE_INFO.opacity = CONSOLE_INFO.max_opacity
+                CONSOLE_INFO.pos.y = 0
+                MGSA_CHRONO.kill(CONSOLE_INFO.timer)
+                CONSOLE_INFO.timer = nil
+                return
+            end
+            CONSOLE_INFO.opacity = CONSOLE_INFO.opacity + math.floor(CONSOLE_INFO.max_opacity / CONSOLE_INFO.max_y_offset)
+            CONSOLE_INFO.pos.y = CONSOLE_INFO.pos.y - 1
+        end, true
     )
 
     return true
@@ -70,6 +105,23 @@ function __MGSACommandInput__.close()
                 color = SIVA
             }
         }
+    )
+
+    if CONSOLE_INFO.timer ~= nil then
+        MGSA_CHRONO.kill(CONSOLE_INFO.timer)
+    end
+
+    CONSOLE_INFO.timer = MGSA_CHRONO.task(
+        CONSOLE_INFO.delay, function (id)
+            if CONSOLE_INFO.opacity <= 0 then
+                MGSA_CHRONO.kill(CONSOLE_INFO.timer)
+                CONSOLE_INFO.timer = nil
+                render = false
+                return
+            end
+            CONSOLE_INFO.opacity = CONSOLE_INFO.opacity - math.floor(CONSOLE_INFO.max_opacity / CONSOLE_INFO.max_y_offset)
+            CONSOLE_INFO.pos.y = CONSOLE_INFO.pos.y + 1
+        end, true
     )
 
     return true
@@ -99,7 +151,12 @@ end
 
 function __MGSACommandInput__.loop()
     if not active then
-        if wasKeyPressed(MGSA_KEY_Z) and not MGSA_API.isSampChatOpened() and not MGSA_API.isSampDialogOnScreen() then
+        if (
+            wasKeyPressed(MGSA_KEY_Z)
+            and not MGSA_API.isSampChatOpened()
+            and not MGSA_API.isSampDialogOnScreen()
+            and not MGSADialog.isPendingDialog()
+        ) then
             __MGSACommandInput__.open()
         end
         return
@@ -151,7 +208,7 @@ function __MGSACommandInput__.loop()
 end
 
 function __MGSACommandInput__.render()
-    if not active then return end
+    if not render then return end
 
     if not font then
         font = renderCreateFont("Arial", 10, 1)
@@ -159,28 +216,28 @@ function __MGSACommandInput__.render()
 
     local screenW, screenH = getScreenResolution()
 
-    local x = math.floor((screenW - WIDTH) / 2)
-    local y = math.floor((screenH - HEIGHT) / 2)
+    local x = math.floor((screenW - WIDTH) / 2) + CONSOLE_INFO.pos.x
+    local y = math.floor((screenH - HEIGHT) / 2) + CONSOLE_INFO.pos.y
 
     renderDrawBoxWithBorder(
         x, y,
         WIDTH, HEIGHT,
-        COLORS.background,
+        MGSARender.setColorOpacity(COLORS.background, CONSOLE_INFO.opacity - 25),
         2,
-        MGSA_STICKMAN_COLOR--COLORS.border
+        MGSARender.setColorOpacity(MGSA_STICKMAN_COLOR, CONSOLE_INFO.opacity - 10)--COLORS.border
     )
 
     renderDrawBox(
         x + 2, y + 2,
         WIDTH - 4, 32,
-        COLORS.header
+        MGSARender.setColorOpacity(COLORS.header, CONSOLE_INFO.opacity)
     )
 
     renderFontDrawText(
         font,
         MGSA_PROJECT_NAME,
         x + 16, y + 11,
-        COLORS.title
+        MGSARender.setColorOpacity(COLORS.title, CONSOLE_INFO.opacity)
     )
 
     -- Opis.
@@ -188,23 +245,23 @@ function __MGSACommandInput__.render()
         font,
         "Unesite komandu:",
         x + 18, y + 47,
-        COLORS.footer
+        MGSARender.setColorOpacity(COLORS.footer, CONSOLE_INFO.opacity)
     )
 
     renderDrawBoxWithBorder(
         x + 16, y + 68,
         WIDTH - 32, 36,
-        COLORS.input,
+        MGSARender.setColorOpacity(COLORS.input, CONSOLE_INFO.opacity),
         1,
-        COLORS.inputBorder
+        MGSARender.setColorOpacity(COLORS.inputBorder, CONSOLE_INFO.opacity)
     )
 
     local displayText = inputText
-    local textColor = COLORS.text
+    local textColor = MGSARender.setColorOpacity(COLORS.text, CONSOLE_INFO.opacity)
 
     if inputText == "" then
         displayText = PLACEHOLDER
-        textColor = COLORS.placeholder
+        textColor = MGSARender.setColorOpacity(COLORS.placeholder, CONSOLE_INFO.opacity)
     end
 
     if math.floor(os.clock() * 2) % 2 == 0 then
@@ -222,14 +279,14 @@ function __MGSACommandInput__.render()
         font,
         "ENTER - izvrsi",
         x + 18, y + 119,
-        COLORS.footer
+        MGSARender.setColorOpacity(COLORS.footer, CONSOLE_INFO.opacity)
     )
 
     renderFontDrawText(
         font,
         "ESC - odustani",
         x + WIDTH - 150, y + 119,
-        COLORS.footer
+        MGSARender.setColorOpacity(COLORS.footer, CONSOLE_INFO.opacity)
     )
 end
 

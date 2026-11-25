@@ -236,8 +236,8 @@ end
 MGSARender = MGSA_STATIC_INCLUDE("modules/render.lua")
 MGSA_STICKMAN_COLOR = TIRKIZNA
 MGSAAltChat = MGSA_STATIC_INCLUDE("modules/alt.lua")
-MGSACommandInput = MGSA_STATIC_INCLUDE("cmdin.lua")
 MGSADialog = MGSA_STATIC_INCLUDE("modules/dialog.lua")
+MGSACommandInput = MGSA_STATIC_INCLUDE("cmdin.lua")
 MGSAAutoBikeSprint = MGSA_STATIC_INCLUDE("modules/bikesprint.lua")
 MGSASprinthookHandle = MGSA_STATIC_INCLUDE("modules/sprinthook.lua")
 MGSASkin = MGSA_STATIC_INCLUDE("modules/skin.lua")

@@ -56,7 +56,7 @@ COLOR_ORANGE     = "{FFA500}"
 COLOR_SKYBLUE    = "{33CCFF}"
 COLOR_WHITE      = "{FFFFFF}"
 COLOR_GRAY       = "{CCCCCC}"
-COLOR_DARK_GREEN = "{0B6623}" -- Bogata tamnozelena / šumska zelena
+COLOR_DARK_GREEN = "{0B6623}" -- Bogata tamnozelena / sumska zelena
 COLOR_PINK       = "{FF66CC}"
 COLOR_PURPLE     = "{9933FF}"
 COLOR_GOLD       = "{FFD700}"
@@ -65,6 +65,8 @@ COLOR_NEON_PURPLE = "{E040FB}" -- Čista fluorescentna neon ljubičasta
 COLOR_ELECTRIC_VIOLET = "{8A2BE2}" -- Jarka električna ljubičasta
 COLOR_MAGENTA_GLOW  = "{FF00FF}" -- Jarka neon magenta/roza-ljubičasta
 COLOR_BEAUTIFUL_BLUE = "{d4fffe}"
+COLOR_TURQOISE = "{1d8fa1}"
+COLOR_BRIGHT_TURQOISE = "{97d4de}"
 -----------KOMANDE_----------------
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
@@ -137,7 +139,7 @@ MGSA_API = MGSA_STATIC_INCLUDE("api.lua")
 MGSA_DIALOG_OPEN = false
 MGSA_CHAT_OPEN = false
 
-MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_SKYBLUE.."Miki's"..COLOR_PEACH.." GTASAdmin"..COLOR_PURPLE .."!:."
+MESSAGE_HEADER = COLOR_PURPLE..".:!"..COLOR_TURQOISE.."Miki's"..COLOR_PEACH.." GTASAdmin"..COLOR_PURPLE .."!:."
 --------MODULI
 MGSA_SPRINTHOOK = true
 MGSA_ALT_CHAT = true
@@ -370,7 +372,7 @@ function MGSA_STATUS()
     --------------------------------OBS
     INFO = MODUL(INFO, "MiniRadar") if MGSA_MINIRADAR then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------
-    INFO = INFO..'\n\n'..COLOR_SKYBLUE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
+    INFO = INFO..'\n\n'..COLOR_TURQOISE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
     ..'\n'.."Pod 'varijabilne' misli se na module koji se mogu gasiti-paliti po potrebi!"
     ..'\n'.."Sve ucitane module mozete pregledati klikom na 'Z' pa 'Enter'."
 
@@ -386,15 +388,15 @@ function MGSA_KOMANDE(params)
 
     INFO = COLOR_PEACH .. "Dostupne komande:\n\n"
     for i, what in ipairs(MGSA_COMMANDS) do
-        INFO = INFO..COLOR_PINK.."* "..COLOR_SKYBLUE..(what.name)..MGSA_TAB..MGSA_TAB..COLOR_PEACH..(what.desc)..'\n'
+        INFO = INFO..COLOR_PINK.."* "..COLOR_TURQOISE..(what.name)..MGSA_TAB..MGSA_TAB..COLOR_PEACH..(what.desc)..'\n'
     end
 
-    INFO = INFO..'\n'..COLOR_SKYBLUE.."Sve navedene komande koriste se iskljucivo preko Z konzole!".."\n"
+    INFO = INFO..'\n'..COLOR_TURQOISE.."Sve navedene komande koriste se iskljucivo preko Z konzole!".."\n"
 
     INFO = INFO..'\n'..COLOR_ORANGE.."Ucitani moduli ("..COLOR_RED..tostring(#MGSA_LOADED_MODULES)..COLOR_ORANGE.."):\n"
     for i, modul in ipairs(MGSA_LOADED_MODULES) do
         if modul.name and modul.desc then
-            INFO = INFO..MGSA_TAB..COLOR_YELLOW..'* '..COLOR_DARK_GREEN..modul.name..MGSA_TAB..COLOR_PEACH..modul.desc..'\n'
+            INFO = INFO..MGSA_TAB..COLOR_YELLOW..'* '..COLOR_BRIGHT_TURQOISE..modul.name..MGSA_TAB..COLOR_PEACH..modul.desc..'\n'
         end
     end
 

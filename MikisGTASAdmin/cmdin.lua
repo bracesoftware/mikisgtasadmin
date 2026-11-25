@@ -12,13 +12,13 @@ local HEIGHT = 145
 
 local COLORS = {
     background = 0xF014141C,
-    header = 0xFF211B30,
-    border = 0xFF8A2BE2,
-    title = 0xFFB58AFF,
+    header = BRIGHT_TURQOISE,
+    border = TURQOISE,
+    title = TURQOISE,
     text = 0xFFFFFFFF,
-    placeholder = 0xFF888899,
+    placeholder = BRIGHT_TURQOISE,
     input = 0xFF20202B,
-    inputBorder = 0xFF8064C8,
+    inputBorder = TURQOISE,
     footer = 0xFFAAAAAA
 }
 

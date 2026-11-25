@@ -1,7 +1,8 @@
 local __MGSAWallhack__ = {}
 
 local MGSA_STICKMAN_COLORS = {
-    TIRKIZNA,
+    TURQOISE,
+    BRIGHT_TURQOISE,
     LJUBICASTA
 }
 local MGSA_STICKMAN_COLOR_IDX = 1

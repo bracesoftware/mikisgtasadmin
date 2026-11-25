@@ -12,7 +12,7 @@ local HEIGHT = 145
 
 local COLORS = {
     background = 0xF014141C,
-    header = BRIGHT_TURQOISE,
+    header = BLACK_TURQOISE,
     border = TURQOISE,
     title = TURQOISE,
     text = 0xFFFFFFFF,

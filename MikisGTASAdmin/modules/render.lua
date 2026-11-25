@@ -61,6 +61,7 @@ LIGHT_GRAY = 0xffbabfbf
 
 TURQOISE = 0xff1d8fa1
 BRIGHT_TURQOISE = 0xff97d4de
+BLACK_TURQOISE = 0xff011214
 
 MGSA_FONT = renderCreateFont("Arial", 10, 5)
 MGSA_FONT_BOLD = renderCreateFont("Arial", 10, 13)

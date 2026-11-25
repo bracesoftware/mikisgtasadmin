@@ -247,9 +247,6 @@ local function MGSA_RENDER_STICKMAN(ped, color)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, TOP_RIGHT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_LEFT, BOTTOM_LEFT, 1.0, col)
     MGSA_DRAWLINE_POINTS(TOP_RIGHT, BOTTOM_RIGHT, 1.0, col)
-
-    MGSA_DRAWLINE_POINTS(BOTTOM_LEFT, TOP_RIGHT, 1.0,col)
-    MGSA_DRAWLINE_POINTS(TOP_LEFT, BOTTOM_RIGHT, 1.0,col)
 end
 
 
@@ -481,6 +478,9 @@ local function MGSA_RENDER_VEHICLES()
                     MGSA_DRAWLINE_POINTS(pos[3], pos[4], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[2], pos[4], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[1], pos[3], 1.0, NICE_PURPLE)
+
+                    MGSA_DRAWLINE_POINTS(pos[1], pos[4], 1.0, NICE_PURPLE)
+                    MGSA_DRAWLINE_POINTS(pos[2], pos[3], 1.0, NICE_PURPLE)
 
                 end
 

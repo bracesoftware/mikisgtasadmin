@@ -473,15 +473,13 @@ local function MGSA_RENDER_VEHICLES()
                 and pos[2][1] and pos[2][2]
                 and pos[3][1] and pos[3][2]
                 and pos[4][1] and pos[4][2] then
-
                     MGSA_DRAWLINE_POINTS(pos[1], pos[2], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[3], pos[4], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[2], pos[4], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[1], pos[3], 1.0, NICE_PURPLE)
-
+                    --x
                     MGSA_DRAWLINE_POINTS(pos[1], pos[4], 1.0, NICE_PURPLE)
                     MGSA_DRAWLINE_POINTS(pos[2], pos[3], 1.0, NICE_PURPLE)
-
                 end
 
                 local vehid = getCarModel(vhandle)

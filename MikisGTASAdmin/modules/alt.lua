@@ -36,7 +36,7 @@ local function send____(format)
     table.insert(MESSAGE_HISTORY, {
         format = newformat,
         x_offset = 30,
-        time = MGSA_ALT_INTERVAL * 1000
+        time = MGSA_ALT_INTERVAL * 500
     })
 end
 
@@ -82,11 +82,11 @@ function __MGSAAltChat__.toggle()
 end
 
 function __MGSAAltChat__.update()
-    if MESSAGE_HISTORY[1].time <= 0 then
-        table.remove(MESSAGE_HISTORY, 1)
+    for i = #MESSAGE_HISTORY, 1, -1 do
+        if MESSAGE_HISTORY[i].time <= 0 then
+            table.remove(MESSAGE_HISTORY, i)
+        end
     end
 end
-
-
 
 return __MGSAAltChat__

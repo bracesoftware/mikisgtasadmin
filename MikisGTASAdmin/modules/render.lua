@@ -156,7 +156,7 @@ function __MGSARender__.renderBar(font, value, maxValue, cx, cy, width, height, 
     local ratio = math.min(math.max(value / maxValue, 0), 1)
     local startX = cx - (width / 2) 
     local startY = cy - (height / 2)
-    local borderOffset = 1.8
+    local borderOffset = 1.6
 
     renderDrawBox(
         startX - borderOffset,

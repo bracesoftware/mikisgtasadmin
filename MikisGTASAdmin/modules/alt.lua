@@ -35,7 +35,8 @@ local function send____(format)
 
     table.insert(MESSAGE_HISTORY, {
         format = newformat,
-        x_offset = 30
+        x_offset = 30,
+        time = MGSA_ALT_INTERVAL * 1000
     })
 end
 
@@ -66,6 +67,7 @@ MGSA_CHRONO.task(
                 msg.x_offset = msg.x_offset - 1
             end
             if msg.x_offset < 0 then msg.x_offset = 0 end
+            if msg.time > 0 then msg.time = msg.time - 1 end
         end
     end, true
 )
@@ -79,16 +81,9 @@ function __MGSAAltChat__.toggle()
     sendWarningMessage("Uspjesno ste ugasili alt chat!")
 end
 
-local l = os.clock()
-
 function __MGSAAltChat__.update()
-    local c = os.clock()
-
-    if c - l >= MGSA_ALT_INTERVAL then
-        if #MESSAGE_HISTORY > 0 then
-            table.remove(MESSAGE_HISTORY, 1)
-        end
-        l = c
+    if MESSAGE_HISTORY[1].time <= 0 then
+        table.remove(MESSAGE_HISTORY, 1)
     end
 end
 

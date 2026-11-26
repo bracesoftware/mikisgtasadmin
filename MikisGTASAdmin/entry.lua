@@ -74,17 +74,21 @@ MGSA_PLAYER_POS = {
     x = 0, y = 0, z = 0
 }
 --KOMANDE
-SET_SKIN = "setskin"
-TOGGLE_RECORD_OBS = "obs"
-RECORD_STATUS = "obss"
-SPRINT = "sprint"
-WALLHACK = "wh"
-CRASH = "c"
-SPEC = "spec"
-SPECOFF = "specoff"
-ALTC = "altc"
-BIKE = "bike"
-STATUS = "status"
+local MGSA_COMMAND_NAMES = {
+    SET_SKIN = "setskin",
+    TOGGLE_RECORD_OBS = "obs",
+    RECORD_STATUS = "obss",
+    SPRINT = "sprint",
+    WALLHACK = "wh",
+    CRASH = "c",
+    SPEC = "spec",
+    SPECOFF = "specoff",
+    ALTC = "altc",
+    BIKE = "bike",
+    STATUS = "status",
+    RADAR = "radar",
+    TOGGLE_OBS_MODULE = "obsm"
+}
 
 --------------LIBRARIES-----------
 function MGSA_LOADED_MODULE(module)
@@ -450,56 +454,56 @@ function MGSA_ENTRY()
     --sampRegisterChatCommand(MGSA, MGSA_KOMANDE)
 
     MGSA_REGISTER_COMMAND({
-        name = RECORD_STATUS,
+        name = MGSA_COMMAND_NAMES.RECORD_STATUS,
         func = MGSAObsConnect.status,
         warn = false,
         args = false,
         desc = "Provjerite status snimanja preko OBS servera!"
     })
     MGSA_REGISTER_COMMAND({
-        name = TOGGLE_RECORD_OBS,
+        name = MGSA_COMMAND_NAMES.TOGGLE_RECORD_OBS,
         func = MGSAObsConnect.toggle,
         warn = false,
         args = false,
         desc = "Ukljucite/iskljucite snimanje preko OBS."
     })
     MGSA_REGISTER_COMMAND({
-        name = CRASH,
+        name = MGSA_COMMAND_NAMES.CRASH,
         func = MGSA_CRASH,
         warn = false,
         args = false,
         desc = "Srusite igru."
     })
     MGSA_REGISTER_COMMAND({
-        name = WALLHACK,
+        name = MGSA_COMMAND_NAMES.WALLHACK,
         func = MGSAWallhack.toggle,
         warn = true,
         args = false,
         desc = "Ukljucite/iskljucite wallhack."
     })
     MGSA_REGISTER_COMMAND({
-        name = SPRINT,
+        name = MGSA_COMMAND_NAMES.SPRINT,
         func = MGSASprinthookHandle.toggle,
         warn = true,
         args = false,
         desc = "Ukljucite/iskljucite sprint modul-hackove sa sprintovanjem!"
     })
     MGSA_REGISTER_COMMAND({
-        name = SPECOFF,
+        name = MGSA_COMMAND_NAMES.SPECOFF,
         func = MGSASpecHack.specoff,
         warn = true,
         args = false,
         desc = "Izadjite iz speca."
     })
     MGSA_REGISTER_COMMAND({
-        name = SPEC,
+        name = MGSA_COMMAND_NAMES.SPEC,
         func = MGSASpecHack.spec,
         warn = true,
         args = true,
         desc = "Udjite u spec."
     })
     MGSA_REGISTER_COMMAND({
-        name = SET_SKIN,
+        name = MGSA_COMMAND_NAMES.SET_SKIN,
         func = MGSASkin.set,
         warn = true,
         args = true,
@@ -507,7 +511,7 @@ function MGSA_ENTRY()
     })
     MGSA_REGISTER_COMMAND(
         {
-            name = ALTC,
+            name = MGSA_COMMAND_NAMES.ALTC,
             func = MGSAAltChat.toggle,
             warn = false,
             args = false,
@@ -516,7 +520,7 @@ function MGSA_ENTRY()
     )
     MGSA_REGISTER_COMMAND(
         {
-            name = BIKE,
+            name = MGSA_COMMAND_NAMES.BIKE,
             func = MGSAAutoBikeSprint.toggle,
             warn = true,
             args = false,
@@ -525,7 +529,7 @@ function MGSA_ENTRY()
     )
     MGSA_REGISTER_COMMAND(
         {
-            name = STATUS,
+            name = MGSA_COMMAND_NAMES.STATUS,
             func = MGSA_STATUS,
             warn = false,
             args = false,
@@ -534,7 +538,7 @@ function MGSA_ENTRY()
     )
     MGSA_REGISTER_COMMAND(
         {
-            name = "obsm",
+            name = MGSA_COMMAND_NAMES.TOGGLE_OBS_MODULE,
             func = MGSAObsConnect.toggleModule,
             warn = false,
             args = false,
@@ -543,7 +547,7 @@ function MGSA_ENTRY()
     )
     MGSA_REGISTER_COMMAND(
         {
-            name = "radar",
+            name = MGSA_COMMAND_NAMES.RADAR,
             func = MGSAMiniRadar.toggle,
             warn = false,
             args = false,
@@ -616,6 +620,40 @@ function MGSA_ENTRY()
         --MGSA_PingAccessTest()
     end
 end
+
+local MGSA_TIPS = {
+    "Koristite sisteme oprezno!",
+    "Klikni 'Z' pa 'ENTER' da vidis sve dostupne komande!",
+    "Redovno kucaj ["..MGSA_COMMAND_NAMES.RECORD_STATUS.."] komandu da vidis status snimanja.",
+    "Status modula koji sacinjavaju sistem mozes provjeriti komandom ["..MGSA_COMMAND_NAMES.STATUS.."].",
+    "Sistem radara mozes ugasiti komandom ["..MGSA_COMMAND_NAMES.RADAR.."].",
+    "Mozes obustaviti konekciju sa OBS modulom komandom ["..MGSA_COMMAND_NAMES.TOGGLE_OBS_MODULE.."].",
+    "Mozes obustaviti konekciju sa Sprinthook modulom komandom ["..MGSA_COMMAND_NAMES.SPRINT.."].",
+    "Mozes obustaviti konekciju sa BikeTweaks modulom komandom ["..MGSA_COMMAND_NAMES.BIKE.."].",
+    "Pomocu komande ["..MGSA_COMMAND_NAMES.SET_SKIN.."] mozes postaviti sebi skin."
+}
+
+function getRandomTip()
+    local randomIndex = math.random(1, #MGSA_TIPS)
+    return MGSA_TIPS[randomIndex]
+end
+
+MGSA_CHRONO.task(
+    20.0, function (id)
+        MGSAAltChat.send(
+            {
+                {
+                    text = "Tip: ",
+                    color = INDIGO
+                },
+                {
+                    text = getRandomTip(),
+                    color = BRIGHT_TURQOISE
+                }
+            }
+        )
+    end, true
+)
 
 --Ulazna funkcija bracala
 function MGSA_ENTRY__()

@@ -232,22 +232,18 @@ function __MGSACommandInput__.render()
         WIDTH - 4, 32,
         MGSARender.setColorOpacity(COLORS.header, CONSOLE_INFO.opacity)
     )
-
     renderFontDrawText(
         font,
         MGSA_PROJECT_NAME,
         x + 16, y + 11,
         MGSARender.setColorOpacity(COLORS.title, CONSOLE_INFO.opacity)
     )
-
-    -- Opis.
     renderFontDrawText(
         font,
         "Unesite komandu:",
         x + 18, y + 47,
         MGSARender.setColorOpacity(COLORS.footer, CONSOLE_INFO.opacity)
     )
-
     renderDrawBoxWithBorder(
         x + 16, y + 68,
         WIDTH - 32, 36,

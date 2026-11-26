@@ -80,7 +80,7 @@ local function worldToRadarRelativeForPoints(a,b,c,d,e,f,g)
     return x,y
 end
 
-local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
+local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments, opacity)
     radiusPx = radiusPx or 34
     fovDeg = fovDeg or 65
     segments = segments or 14
@@ -89,6 +89,8 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
     local halfFov = math.rad(fovDeg * 0.5)
     local startAngle = radCenter - halfFov
     local stepAngle = (halfFov * 2) / segments
+
+    local col = MGSARender.setColorOpacity(MGSA_STICKMAN_COLOR,opacity)
 
     for i = 0, segments - 1 do
         local a1 = startAngle + i * stepAngle
@@ -101,7 +103,7 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
         local y2 = cy - (math.cos(a2)) * radiusPx
 
         if renderDrawTriangle then
-            pcall(renderDrawTriangle, cx, cy, x1, y1, x2, y2, MGSA_STICKMAN_COLOR)
+            pcall(renderDrawTriangle, cx, cy, x1, y1, x2, y2, col)
         else
             local mx = (x1 + x2) * 0.5
             local my = (y1 + y2) * 0.5
@@ -109,7 +111,7 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
                 local t = s / 10
                 local px = cx + (mx - cx) * t
                 local py = cy + (my - cy) * t
-                renderDrawBox(px - 1.5, py - 1.5, 3, 3, MGSA_STICKMAN_COLOR)
+                renderDrawBox(px - 1.5, py - 1.5, 3, 3, col)
             end
         end
     end
@@ -226,9 +228,8 @@ local function drawRadar()
         end
     end
 
-
     local h = getViewHeadingDeg()
-    drawVisionCone(cx, cy, h, 36, 65, 16)
+    drawVisionCone(cx, cy, h, 36, 65, 16, ICON_OPACITY - 20)
     renderDrawBox(cx - half - 1, cy - half - 1, radar.dotSize + 2, radar.dotSize + 2, 0xFF000000)
     renderDrawBox(cx - half, cy - half, radar.dotSize, radar.dotSize, MGSA_STICKMAN_COLOR)
 end

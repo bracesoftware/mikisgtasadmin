@@ -192,6 +192,7 @@ local function drawRadar()
         end
     end
 
+    local half = radar.dotSize * 0.5
     local result, x, y, z = getTargetBlipCoordinates()
     if result then
         local sx,sy = worldToRadarRelativeForPoints(x,y,MGSA_PLAYER_POS.x,MGSA_PLAYER_POS.y,cx,cy,radiusPx)
@@ -201,7 +202,6 @@ local function drawRadar()
         end
     end
 
-    local half = radar.dotSize * 0.5
     local ok, nick, ped
     for id = 0, MGSA_API.sampGetLargestPlayerId() do
         if MGSA_API.sampIsPlayerConnected(id) then

@@ -56,6 +56,30 @@ local function worldToRadarRelative(wx, wy, myx, myy, cx, cy, radiusPx)
     return sx, sy
 end
 
+local function worldToRadarRelativeComplex(wx, wy, myx, myy, cx, cy, radiusPx)
+    local dx = (wx - myx) / radar.range
+    local dy = (wy - myy) / radar.range
+
+    local sx = dx * radiusPx
+    local sy = -dy * radiusPx
+
+    local distance = math.sqrt(sx * sx + sy * sy)
+    local maxRadius = radiusPx - radar.dotSize
+    local outside = distance > maxRadius
+
+    if outside and distance > 0 then
+        local scale = maxRadius / distance
+        sx = sx * scale
+        sy = sy * scale
+    end
+
+    return cx + sx, cy + sy, outside
+end
+local function worldToRadarRelativeForPoints(a,b,c,d,e,f,g)
+    local x,y,o = worldToRadarRelativeComplex(a,b,c,d,e,f,g)
+    return x,y
+end
+
 local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
     radiusPx = radiusPx or 34
     fovDeg = fovDeg or 65
@@ -65,8 +89,6 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
     local halfFov = math.rad(fovDeg * 0.5)
     local startAngle = radCenter - halfFov
     local stepAngle = (halfFov * 2) / segments
-
-    local coneColor = 0x3633CCFF
 
     for i = 0, segments - 1 do
         local a1 = startAngle + i * stepAngle
@@ -79,7 +101,7 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
         local y2 = cy - (math.cos(a2)) * radiusPx
 
         if renderDrawTriangle then
-            pcall(renderDrawTriangle, cx, cy, x1, y1, x2, y2, coneColor)
+            pcall(renderDrawTriangle, cx, cy, x1, y1, x2, y2, MGSA_STICKMAN_COLOR)
         else
             local mx = (x1 + x2) * 0.5
             local my = (y1 + y2) * 0.5
@@ -87,7 +109,7 @@ local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments)
                 local t = s / 10
                 local px = cx + (mx - cx) * t
                 local py = cy + (my - cy) * t
-                renderDrawBox(px - 1.5, py - 1.5, 3, 3, 0x2633CCFF)
+                renderDrawBox(px - 1.5, py - 1.5, 3, 3, MGSA_STICKMAN_COLOR)
             end
         end
     end
@@ -170,6 +192,15 @@ local function drawRadar()
         end
     end
 
+    local result, x, y, z = getTargetBlipCoordinates()
+    if result then
+        local sx,sy = worldToRadarRelativeForPoints(x,y,MGSA_PLAYER_POS.x,MGSA_PLAYER_POS.y,cx,cy,radiusPx)
+        if canFitIntoRadar(sx,sy,rx,ry,rw,rh) then
+            renderDrawBox(sx - half - 1, sy - half - 1, radar.dotSize + 2, radar.dotSize + 2, 0xFF000000)
+            renderDrawBox(sx - half, sy - half, radar.dotSize, radar.dotSize, MGSA_STICKMAN_COLOR)
+        end
+    end
+
     local half = radar.dotSize * 0.5
     local ok, nick, ped
     for id = 0, MGSA_API.sampGetLargestPlayerId() do
@@ -199,7 +230,7 @@ local function drawRadar()
     local h = getViewHeadingDeg()
     drawVisionCone(cx, cy, h, 36, 65, 16)
     renderDrawBox(cx - half - 1, cy - half - 1, radar.dotSize + 2, radar.dotSize + 2, 0xFF000000)
-    renderDrawBox(cx - half, cy - half, radar.dotSize, radar.dotSize, 0xFF33CCFF)
+    renderDrawBox(cx - half, cy - half, radar.dotSize, radar.dotSize, MGSA_STICKMAN_COLOR)
 end
 
 function __MGSAMiniRadar__.loop()

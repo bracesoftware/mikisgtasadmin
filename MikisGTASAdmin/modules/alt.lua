@@ -83,6 +83,7 @@ end
 
 function __MGSAAltChat__.update()
     for i = #MESSAGE_HISTORY, 1, -1 do
+        --print("MESSAGE_HISTORY["..tostring(i).."].time -> "..tostring(MESSAGE_HISTORY[i].time))
         if MESSAGE_HISTORY[i].time <= 0 then
             table.remove(MESSAGE_HISTORY, i)
         end

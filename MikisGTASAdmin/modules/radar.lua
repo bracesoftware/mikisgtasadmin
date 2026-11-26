@@ -59,12 +59,12 @@ end
 local function worldToRadarRelativeComplex(wx, wy, myx, myy, cx, cy, radiusPx)
     local dx = (wx - myx) / radar.range
     local dy = (wy - myy) / radar.range
-
-    local sx = dx * radiusPx
-    local sy = -dy * radiusPx
+    local rr = radiusPx + 15
+    local sx = dx * rr
+    local sy = -dy * rr
 
     local distance = math.sqrt(sx * sx + sy * sy)
-    local maxRadius = radiusPx - radar.dotSize
+    local maxRadius = rr - radar.dotSize
     local outside = distance > maxRadius
 
     if outside and distance > 0 then

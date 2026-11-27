@@ -11,23 +11,18 @@ local bike = {[481] = true, [509] = true, [510] = true}
 local function getVehicleModel()
     local success, pedPtr = pcall(readMemory, ADDR_PLAYER_PED, 4, false)
     if not success or pedPtr == 0 then return 0 end
-    
     local successVeh, vehPtr = pcall(readMemory, pedPtr + ADDR_PED_VEHICLE, 4, false)
     if not successVeh or vehPtr == 0 then return 0 end
-    
     local successModel, model = pcall(readMemory, vehPtr + ADDR_VEHICLE_MODEL, 2, false)
     if not successModel then return 0 end
-    
     return model
 end
 
 local function isInVehicle()
     local success, pedPtr = pcall(readMemory, ADDR_PLAYER_PED, 4, false)
     if not success or pedPtr == 0 then return false end
-    
     local successVeh, vehPtr = pcall(readMemory, pedPtr + ADDR_PED_VEHICLE, 4, false)
     if not successVeh then return false end
-    
     return vehPtr ~= 0
 end
 
@@ -73,7 +68,11 @@ local isHoldingSprint = false
 
 function __MGSAutoBikeSprint__.loop()
     if not MGSA_BIKE_TWEAKS then return end
-    MIKIGTASADMIN_CANSPRINT = not MGSA_API.isSampChatOpened() and not MGSA_API.isSampDialogOnScreen()
+    MIKIGTASADMIN_CANSPRINT = (
+        not MGSA_API.isSampChatOpened()
+        and not MGSA_API.isSampDialogOnScreen()
+        and not MGSACommandInput.isCommandConsoleOpen()
+    )
 
     if MIKIGTASADMIN_CANSPRINT ~= MIKIGTASADMIN_CANSPRINT_OLD then
         if MIKIGTASADMIN_CANSPRINT then
@@ -129,29 +128,32 @@ function __MGSAutoBikeSprint__.loop()
     end
 end
 
+local MGSA_CHARGE = 0
+
 function __MGSAutoBikeSprint__.bikeJump()
     if not MGSA_BIKE_TWEAKS then return end
     if not MIKIGTASADMIN_CANSPRINT then return end
-
     local model = getVehicleModel()
     local onBike = isInVehicle() and bike[model]
-
     if not onBike then return end
-    if not isKeyDown(MGSA_KEY_LALT) then return end
-
     local success, pedPtr = pcall(readMemory, ADDR_PLAYER_PED, 4, false)
     if not success or pedPtr == 0 then return end
-
     local successVeh, vehPtr = pcall(
         readMemory,
         pedPtr + ADDR_PED_VEHICLE,
         4,
         false
     )
-
     if not successVeh or vehPtr == 0 then return end
-
-    writeMemory(vehPtr + 0x4c, 4, representFloatAsInt(0.3), false)
+    ---------------------
+    local lalt = isKeyDown(MGSA_KEY_LALT)
+    if lalt then
+        MGSA_CHARGE = MGSA_CHARGE + 1
+    end
+    if not lalt and MGSA_CHARGE > 0 then
+        writeMemory(vehPtr + 0x4c, 4, representFloatAsInt(0.3 + (0.12 / MGSA_CHARGE)), false)
+        MGSA_CHARGE = MGSA_CHARGE - 1
+    end
 end
 
 return __MGSAutoBikeSprint__

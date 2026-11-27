@@ -9,7 +9,7 @@ local render = false
 
 local WIDTH = 500
 local HEIGHT = 145
-
+local MGSA_COMMAND_CONSOLE_OPEN = false
 local COLORS = {
     background = 0xF014141C,
     header = BLACK_TURQOISE,
@@ -207,7 +207,10 @@ function __MGSACommandInput__.loop()
     end
 end
 
+function __MGSACommandInput__.isCommandConsoleOpen() return MGSA_COMMAND_CONSOLE_OPEN end
+
 function __MGSACommandInput__.render()
+    MGSA_COMMAND_CONSOLE_OPEN = render
     if not render then return end
 
     if not font then

@@ -71,7 +71,8 @@ COLOR_BRIGHT_TURQOISE = "{97d4de}"
 MGSA = "mgsa"
 MIKIS_GTASADMIN_HELP = "mikisgtasadmin"
 MGSA_PLAYER_POS = {
-    x = 0, y = 0, z = 0
+    x = 0, y = 0, z = 0,
+    angle = 0, cangle = 0
 }
 --KOMANDE
 local MGSA_COMMAND_NAMES = {
@@ -87,7 +88,8 @@ local MGSA_COMMAND_NAMES = {
     BIKE = "bike",
     STATUS = "status",
     RADAR = "radar",
-    TOGGLE_OBS_MODULE = "obsm"
+    TOGGLE_OBS_MODULE = "obsm",
+    AIRB = "airb"
 }
 
 --------------LIBRARIES-----------
@@ -151,6 +153,7 @@ MGSA_BIKE_TWEAKS = true
 MGSA_WALLHACK = true
 MGSA_OBS = true
 MGSA_MINIRADAR = true
+MGSA_AIRBREAK = true
 
 --*************************************************************
 MGSA_TAB = "   "
@@ -249,10 +252,10 @@ MGSASprinthookHandle = MGSA_STATIC_INCLUDE("modules/sprinthook.lua")
 MGSASkin = MGSA_STATIC_INCLUDE("modules/skin.lua")
 MGSAWallhack = MGSA_STATIC_INCLUDE("modules/wh.lua")
 MGSASpecHack = MGSA_STATIC_INCLUDE("modules/spec.lua")
-
 MGSA_STATIC_INCLUDE("dynamic/obscfg.lua")
 MGSAObsConnect = MGSA_STATIC_INCLUDE("modules/obsconnect.lua")
 MGSAMiniRadar = MGSA_STATIC_INCLUDE("modules/radar.lua")
+MGSAAirBreak = MGSA_STATIC_INCLUDE("modules/airb.lua")
 
 -------------------------------------------------------
 ---  MGSA ---------------------------------------------
@@ -375,6 +378,8 @@ function MGSA_STATUS()
     INFO = MODUL(INFO, "SAMP-OBS") if MGSA_OBS then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------OBS
     INFO = MODUL(INFO, "MiniRadar") if MGSA_MINIRADAR then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
+    --------------------------------OBS
+    INFO = MODUL(INFO, "AirBreak") if MGSA_AIRBREAK then INFO = UKLJUCENO(INFO) else INFO = ISKLJUCENO(INFO) end
     --------------------------------
     INFO = INFO..'\n\n'..COLOR_TURQOISE.."* Ovaj dijalog obuhvata iskljucivo promjenjive odnosno varijabilne komponente sistema."
     ..'\n'.."Pod 'varijabilne' misli se na module koji se mogu gasiti-paliti po potrebi!"
@@ -419,8 +424,37 @@ end
 --- ---------------------------------------------------
 MGSA_LOADED = false
 
+local function getViewHeadingDeg()
+    local ok1, x1, y1 = pcall(getActiveCameraPointAt)
+    local ok2, x2, y2 = pcall(getActiveCameraCoordinates)
+    if ok1 and ok2 and x1 and y1 and x2 and y2 then
+        local okH, h = pcall(getHeadingFromVector2d, x1 - x2, y1 - y2)
+        if okH and type(h) == "number" then
+            return h
+        end
+    end
+    return 0.0
+end
+local function getCameraAngle()
+    local x, y, z = getActiveCameraCoordinates()
+    local x2, y2, z2 = getActiveCameraPointAt()
+
+    local dx = x2 - x
+    local dy = y2 - y
+
+    local angle = math.deg(math.atan(dx, dy))
+
+    if angle < 0 then
+        angle = angle + 360
+    end
+
+    return angle
+end
+
 function MGSA_UPDATE()
     MGSA_PLAYER_POS.x, MGSA_PLAYER_POS.y, MGSA_PLAYER_POS.z = getCharCoordinates(PLAYER_PED)
+    MGSA_PLAYER_POS.angle = getViewHeadingDeg()
+    MGSA_PLAYER_POS.cangle = getCameraAngle()
 end
 
 function MGSA_ENTRY()
@@ -554,6 +588,15 @@ function MGSA_ENTRY()
             desc = "Ukljucite/iskljucite mini-radar modul."
         }
     )
+    MGSA_REGISTER_COMMAND(
+        {
+            name = MGSA_COMMAND_NAMES.AIRB,
+            func = MGSAAirBreak.toggle,
+            warn = true,
+            args = false,
+            desc = "Ukljucite/iskljucite airbreak modul-onemogucava koristenje airbreaka preko tipke "..MGSAAirBreak.getKeyCombination().text.."."
+        }
+    )
     -------------------------
 
     MGSA_SAFE(function()
@@ -567,6 +610,7 @@ function MGSA_ENTRY()
         MGSASpecHack.load()
         MGSACommandInput.load()
         MGSAMiniRadar.load()
+        MGSAAirBreak.load()
     end)
 
     sendSuccessMessage(COLOR_PEACH.."Uspjesno ucitano "..tostring(#MGSA_LOADED_MODULES).." modula i "..tostring(#MGSA_COMMANDS).." komandi!")
@@ -614,6 +658,7 @@ function MGSA_ENTRY()
         MGSACommandInput.loop()
         MGSACommandInput.render()
         MGSAMiniRadar.loop()
+        MGSAAirBreak.loop()
         --
         MGSA_API.__LOOP_SAMP_CHAT()
         MGSA_CHRONO.__PROC()
@@ -630,7 +675,9 @@ local MGSA_TIPS = {
     "Mozes obustaviti konekciju sa OBS modulom komandom ["..MGSA_COMMAND_NAMES.TOGGLE_OBS_MODULE.."].",
     "Mozes obustaviti konekciju sa Sprinthook modulom komandom ["..MGSA_COMMAND_NAMES.SPRINT.."].",
     "Mozes obustaviti konekciju sa BikeTweaks modulom komandom ["..MGSA_COMMAND_NAMES.BIKE.."].",
-    "Pomocu komande ["..MGSA_COMMAND_NAMES.SET_SKIN.."] mozes postaviti sebi skin."
+    "Pomocu komande ["..MGSA_COMMAND_NAMES.SET_SKIN.."] mozes postaviti sebi skin.",
+    "Pomocu komande ["..MGSA_COMMAND_NAMES.AIRB.."] gasite/palite admin airbreak modul.",
+    "Klikom na "..MGSAAirBreak.getKeyCombination().text.." palis admin airbreak rezim kretanja!"
 }
 
 function getRandomTip()

@@ -1365,7 +1365,32 @@ function __MGSAAPI__.sampGetPickupModelBitmaps()
         }
     }
 end
-
+--------------------------------KEY DETECTION
+local comboCooldown = 0.0
+function __MGSAAPI__.isKeyCombinationUsed(keys)
+    if not keys or #keys == 0 then return false end
+    local cooldownSec = 1
+    local now = os.clock()
+    if cooldownSec and (now - comboCooldown) < cooldownSec then
+        return false
+    end
+    local allDown = true
+    local anyJustPressed = false
+    for _, key in ipairs(keys) do
+        if not isKeyDown(key) then
+            allDown = false
+            break
+        end
+        if isKeyJustPressed(key) then
+            anyJustPressed = true
+        end
+    end
+    if allDown and anyJustPressed then
+        comboCooldown = now
+        return true
+    end
+    return false
+end
 
 ----------------------------TESTZ--------------------------------
 

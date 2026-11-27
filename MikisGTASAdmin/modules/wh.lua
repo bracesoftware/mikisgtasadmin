@@ -263,7 +263,7 @@ local function MGSA_COMPLEX_LABEL_RENDER(font,x,y,parts)
 end
 
 function __MGSAWallhack__.toggle()
-    MGSA_TRACE("WALLHACK ENTER")
+    --MGSA_TRACE("WALLHACK ENTER")
 
     MGSA_WALLHACK = not MGSA_WALLHACK
 
@@ -291,13 +291,12 @@ function __MGSAWallhack__.toggle()
         )
     end
 
-    MGSA_TRACE("WALLHACK EXIT")
+    --MGSA_TRACE("WALLHACK EXIT")
 end
 
 
 
 function __MGSAWallhack__.load()
-
     if MGSA_FONTS_FAILED then
         sendErrorMessage("Ne mogu kreirati ESP font!")
         return

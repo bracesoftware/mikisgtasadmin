@@ -16,5 +16,6 @@ return {
     "MikisGTASAdmin/modules/sprinthook.lua",
     "MikisGTASAdmin/modules/wh.lua",
     "MikisGTASAdmin/modules/obsconnect.lua",
-    "MikisGTASAdmin/modules/radar.lua"
+    "MikisGTASAdmin/modules/radar.lua",
+    "MikisGTASAdmin/modules/airb.lua"
 }

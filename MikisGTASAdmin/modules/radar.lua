@@ -33,21 +33,6 @@ local function getRadarRect()
     return x, y, w, h
 end
 
-local function getViewHeadingDeg()
-    if getActiveCameraPointAt and getActiveCameraCoordinates and getHeadingFromVector2d then
-        local ok1, x1, y1 = pcall(getActiveCameraPointAt)
-        local ok2, x2, y2 = pcall(getActiveCameraCoordinates)
-        if ok1 and ok2 and x1 and y1 and x2 and y2 then
-            local okH, h = pcall(getHeadingFromVector2d, x1 - x2, y1 - y2)
-            if okH and type(h) == "number" then
-                return h
-            end
-        end
-    end
-
-    return 0.0
-end
-
 local function worldToRadarRelative(wx, wy, myx, myy, cx, cy, radiusPx)
     local dx = (wx - myx) / radar.range
     local dy = (wy - myy) / radar.range
@@ -80,12 +65,12 @@ local function worldToRadarRelativeForPoints(a,b,c,d,e,f,g)
     return x,y
 end
 
-local function drawVisionCone(cx, cy, headingDeg, radiusPx, fovDeg, segments, opacity)
+local function drawVisionCone(cx, cy, h, radiusPx, fovDeg, segments, opacity)
     radiusPx = radiusPx or 34
     fovDeg = fovDeg or 65
     segments = segments or 14
 
-    local radCenter = math.rad(headingDeg)
+    local radCenter = math.rad(h)
     local halfFov = math.rad(fovDeg * 0.5)
     local startAngle = radCenter - halfFov
     local stepAngle = (halfFov * 2) / segments
@@ -228,8 +213,7 @@ local function drawRadar()
         end
     end
 
-    local h = getViewHeadingDeg()
-    drawVisionCone(cx, cy, h, 36, 65, 16, ICON_OPACITY - 20)
+    drawVisionCone(cx, cy, MGSA_PLAYER_POS.angle, 36, 65, 16, ICON_OPACITY - 20)
     renderDrawBox(cx - half - 1, cy - half - 1, radar.dotSize + 2, radar.dotSize + 2, 0xFF000000)
     renderDrawBox(cx - half, cy - half, radar.dotSize, radar.dotSize, MGSA_STICKMAN_COLOR)
 end

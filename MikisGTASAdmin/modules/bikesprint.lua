@@ -151,7 +151,9 @@ function __MGSAutoBikeSprint__.bikeJump()
         MGSA_CHARGE = MGSA_CHARGE + 1
     end
     if not lalt and MGSA_CHARGE > 0 then
-        writeMemory(vehPtr + 0x4c, 4, representFloatAsInt(0.3 + (0.12 / MGSA_CHARGE)), false)
+        if MGSA_CHARGE % 10 == 0 then
+            writeMemory(vehPtr + 0x4c, 4, representFloatAsInt(0.4 + (0.12 / MGSA_CHARGE)), false)
+        end
         MGSA_CHARGE = MGSA_CHARGE - 1
     end
 end
